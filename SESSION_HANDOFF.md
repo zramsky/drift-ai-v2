@@ -7,7 +7,7 @@
 ## 📍 Project Overview
 
 **Project Name**: DRIFT.AI V2 Contract Reconciliation Platform
-**Current Version**: 2.3.1
+**Current Version**: 2.3.2
 **Last Updated**: November 2, 2025
 **Status**: Production-ready, actively deployed
 
@@ -159,7 +159,18 @@
 
 ## 🔄 Recent Version History
 
-### v2.3.1 (Current - Nov 2, 2025) ⭐
+### v2.3.2 (Current - Nov 2, 2025) ⭐
+- **Supporting Evidence Button Enhancement** - UX improvement
+- Enhanced button in AI Analysis card for better visibility and prominence
+- Changed from outline style to solid brand orange background
+- Increased button size with larger padding (py-6)
+- Made text larger and bolder (text-base, font-semibold)
+- Increased icon size for better visibility
+- Improved description text readability
+- **Result**: Button is now much more prominent and impossible to miss
+- **Testing**: Zero TypeScript errors, works across all breakpoints
+
+### v2.3.1 (Nov 2, 2025)
 - **Inline Highlights Enhancement** - Major UX improvement
 - Refactored highlights from absolute positioned overlays to inline text highlights
 - Implemented dynamic hover tooltips that follow mouse cursor
@@ -497,8 +508,8 @@ Before deploying any changes:
 
 You now have everything you need to continue working on DRIFT.AI V2!
 
-**Current version**: 2.0.4
-**Last session**: Implemented interactive dashboard elements
+**Current version**: 2.3.2
+**Last session**: Enhanced Supporting Evidence button for better visibility
 **Production**: ✅ Deployed and live
 **Next**: Choose a task from "Next Possible Tasks" above
 

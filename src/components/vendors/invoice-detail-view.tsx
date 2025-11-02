@@ -280,13 +280,12 @@ export function InvoiceDetailView({ vendorId, invoiceId, onBack }: InvoiceDetail
                   onClick={() => {
                     window.location.href = `/vendors/${vendorId}/invoice/${invoiceId}/evidence`
                   }}
-                  variant="outline"
-                  className="w-full"
+                  className="w-full bg-brand-orange hover:bg-orange-600 text-white py-6 text-base font-semibold"
                 >
-                  <Eye className="h-4 w-4 mr-2" />
+                  <Eye className="h-5 w-5 mr-2" />
                   View Interactive Evidence
                 </Button>
-                <p className="text-xs text-muted-foreground mt-2 text-center">
+                <p className="text-sm text-muted-foreground mt-3 text-center">
                   See highlighted invoice sections with AI explanations
                 </p>
               </div>

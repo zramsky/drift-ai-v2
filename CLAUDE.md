@@ -19,7 +19,7 @@ Nursing home operators manage hundreds of vendor contracts and process thousands
 ## Version Control & Change Tracking
 
 ### Current Version
-**Version**: 2.3.1
+**Version**: 2.3.2
 **Last Updated**: November 2, 2025
 **Status**: Active Development
 
@@ -49,6 +49,46 @@ Use this template when documenting changes:
 ```
 
 ### Recent Changes
+
+#### [2.3.2] - 2025-11-02
+**Changed By**: Claude Code
+**Type**: Enhancement - Supporting Evidence Button Redesign
+
+**Changes Made**:
+- Enhanced Supporting Evidence button in AI Analysis card for better visibility
+- Changed button from outline style to solid brand orange background
+- Increased button height with larger padding (py-6)
+- Made button text larger and bolder (text-base, font-semibold)
+- Increased icon size from h-4 w-4 to h-5 w-5
+- Improved description text readability (text-sm instead of text-xs)
+- Enhanced spacing below button (mt-3 instead of mt-2)
+
+**Files Modified**:
+- `/Users/zackram/Drift.AI-V2/src/components/vendors/invoice-detail-view.tsx` - Updated Supporting Evidence button styling (lines 277-292)
+
+**Impact**:
+- Significantly improved button prominence and discoverability
+- Users are now much more likely to notice and click the evidence viewer
+- Better alignment with brand identity using solid orange button
+- Enhanced UX with larger, more clickable target area
+- Improved accessibility with larger text and icon
+
+**Testing Notes**:
+- Zero TypeScript errors (`npm run type-check` passed)
+- Button displays correctly on all breakpoints (mobile, tablet, desktop)
+- Hover state works smoothly with orange-600 color transition
+- Click navigation to evidence viewer functioning properly
+- Maintains full responsive design
+
+**Before/After**:
+- **Before**: Small outline button with low prominence, blended into card
+- **After**: Large solid orange button that stands out as primary CTA
+
+**Design Rationale**:
+- Simple, effective enhancement requested by user
+- Keeps existing layout and structure intact
+- Focuses user attention on key interactive feature (evidence viewer)
+- Reinforces brand orange (#FF6B35) throughout platform
 
 #### [2.3.1] - 2025-11-02
 **Changed By**: Claude Code
