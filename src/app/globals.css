@@ -1,0 +1,1045 @@
+/* Removed external font imports to prevent FOUT/FOUC and improve loading performance */
+
+/* React PDF styles */
+@import 'react-pdf/dist/Page/AnnotationLayer.css';
+@import 'react-pdf/dist/Page/TextLayer.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* DRIFT.AI Light Theme Color System */
+    
+    /* Backgrounds: White (app), Light grays (surfaces) */
+    --background: 0 0% 100%; /* #FFFFFF - Main app background */
+    --foreground: 0 0% 15%; /* #262626 - Primary dark text */
+
+    /* Card and surface styling */
+    --card: 0 0% 100%; /* #FFFFFF - White card background */
+    --card-foreground: 0 0% 15%; /* #262626 - Primary dark text */
+
+    /* Popover styling */
+    --popover: 0 0% 100%; /* #FFFFFF - White popover background */
+    --popover-foreground: 0 0% 15%; /* #262626 - Primary dark text */
+
+    /* Primary brand colors - Orange/Coral Accent */
+    --primary: 14 100% 60%; /* #FF6B35 - Orange/Coral accent */
+    --primary-foreground: 0 0% 100%; /* White for text on primary */
+
+    /* Secondary colors - Light grays */
+    --secondary: 0 0% 97%; /* #F8F9FA - Very light gray surface */
+    --secondary-foreground: 0 0% 45%; /* #737373 - Medium gray text */
+
+    /* Muted colors */
+    --muted: 0 0% 96%; /* #F5F5F5 - Light gray surface */
+    --muted-foreground: 0 0% 45%; /* #737373 - Medium gray text */
+
+    /* Accent colors */
+    --accent: 0 0% 96%; /* #F5F5F5 - Light gray accent surface */
+    --accent-foreground: 0 0% 15%; /* #262626 - Dark text on accent */
+
+    /* Destructive/error colors */
+    --destructive: 0 84% 60%; /* #EF4444 - Error Red */
+    --destructive-foreground: 0 0% 100%; /* White */
+
+    /* Success color */
+    --success: 142 71% 45%; /* #22C55E - Success Green */
+    --success-foreground: 0 0% 100%; /* White */
+
+    /* Warning color */
+    --warning: 45 93% 47%; /* #F59E0B - Warning Orange */
+    --warning-foreground: 0 0% 100%; /* White */
+
+    /* Info color */
+    --info: 213 94% 68%; /* #60A5FA - Info Blue */
+    --info-foreground: 0 0% 100%; /* White */
+
+    /* Border and input colors */
+    --border: 0 0% 90%; /* #E5E5E5 - Light borders */
+    --input: 0 0% 100%; /* #FFFFFF - White input background */
+    --ring: 14 100% 60%; /* #FF6B35 - Orange/Coral focus rings */
+
+    /* DRIFT.AI specific radius - 12px */
+    --radius: 0.75rem; /* 12px */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    @apply scroll-smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  }
+  
+  /* Typography Scale */
+  h1, .text-h1 {
+    @apply text-5xl lg:text-6xl leading-tight font-bold;
+  }
+  
+  h2, .text-h2 {
+    @apply text-4xl leading-snug font-semibold;
+  }
+  
+  h3, .text-h3 {
+    @apply text-2xl leading-normal font-semibold;
+  }
+  
+  p, .text-body {
+    @apply text-lg leading-relaxed;
+  }
+  
+  .text-body-lg {
+    @apply text-xl leading-relaxed;
+  }
+
+  /* Focus ring styles for accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/60;
+  }
+}
+
+@layer components {
+  /* DRIFT.AI Card Component */
+  .drift-card {
+    @apply bg-card border border-border rounded-drift shadow-card p-6 transition-all duration-200;
+  }
+  
+  .drift-card:hover {
+    @apply shadow-card-hover border-border/60;
+  }
+  
+  /* Simplified KPI Card styles for clean white design */
+  .kpi-card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6 transition-all duration-200;
+  }
+  
+  .kpi-card:hover {
+    @apply shadow-md;
+  }
+  
+  /* Navigation and Layout */
+  .sidebar-nav {
+    @apply bg-card border-r border-border;
+  }
+  
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-all duration-200 focus-ring;
+  }
+  
+  .nav-item.active {
+    @apply text-primary bg-primary/10 border-l-2 border-primary font-medium;
+  }
+}
+
+@layer utilities {
+  /* Custom grid utilities */
+  .grid-12 {
+    @apply grid grid-cols-12 gap-6;
+  }
+  
+  /* Responsive column spans */
+  .col-span-full {
+    @apply col-span-12;
+  }
+  
+  /* Enhanced responsive breakpoints */
+  .dashboard-grid {
+    @apply grid gap-4 sm:gap-6;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  /* Clean dashboard layout utilities */
+  .dashboard-grid-2 {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  @media (min-width: 1024px) {
+    .dashboard-grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  
+  .dashboard-grid-3 {
+    display: grid !important;
+    gap: 1rem;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    /* Fix: Ensure grid is always visible */
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  @media (min-width: 640px) {
+    .dashboard-grid-3 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .dashboard-grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+  
+  /* Dashboard spacing utilities */
+  .dashboard-spacing {
+    @apply space-y-12;
+  }
+  
+  /* Ultra-minimal dashboard grid - 2 columns only */
+  .dashboard-grid-2 {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  @media (min-width: 1024px) {
+    .dashboard-grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4rem;
+    }
+  }
+  
+  .dashboard-padding {
+    @apply px-4 sm:px-6 lg:px-8 py-8 sm:py-12;
+  }
+  
+  .dashboard-container {
+    @apply max-w-7xl mx-auto;
+  }
+  
+  /* Progress indicator enhancements */
+  .progress-error {
+    @apply [&>div]:bg-error;
+  }
+  
+  .progress-success {
+    @apply [&>div]:bg-success;
+  }
+  
+  /* Loading skeleton animations */
+  .skeleton-pulse {
+    @apply animate-pulse bg-muted;
+  }
+  
+  .skeleton-wave::after {
+    @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-muted-foreground/20 to-transparent;
+    content: '';
+    animation: wave 2s ease-in-out infinite;
+  }
+  
+  @keyframes wave {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  
+  /* Mobile-first responsive utilities */
+  @media (max-width: 640px) {
+    .mobile-stack > * {
+      @apply w-full;
+    }
+    
+    .mobile-hide {
+      @apply hidden;
+    }
+    
+    .mobile-full-width {
+      @apply w-full;
+    }
+    
+    .mobile-center {
+      @apply text-center;
+    }
+    
+    .mobile-text-sm {
+      @apply text-sm;
+    }
+  }
+  
+  /* Touch-friendly mobile styles */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+  
+  .mobile-button {
+    @apply min-h-[44px] px-4 py-2 text-base;
+  }
+  
+  .mobile-input {
+    @apply min-h-[44px] text-base;
+  }
+  
+  /* Mobile card optimizations */
+  .mobile-card {
+    @apply p-4 rounded-lg shadow-sm;
+  }
+  
+  @media (min-width: 640px) {
+    .mobile-card {
+      @apply p-6;
+    }
+  }
+  
+  /* Tablet optimizations */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .tablet-optimize .kpi-card {
+      @apply min-h-[120px];
+    }
+    
+    .tablet-optimize .dashboard-grid-3 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  
+  /* Desktop enhancements */
+  @media (min-width: 1025px) {
+    .desktop-enhance .card {
+      @apply hover:shadow-lg transition-shadow duration-200;
+    }
+  }
+  
+  /* Line clamping utilities for mobile text overflow */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+  
+  /* Mobile navigation styles */
+  .mobile-nav-overlay {
+    @apply fixed inset-0 z-40 bg-black/50 backdrop-blur-sm;
+  }
+  
+  .mobile-nav-drawer {
+    @apply fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out;
+  }
+  
+  .mobile-nav-drawer.closed {
+    @apply -translate-x-full;
+  }
+  
+  .mobile-nav-drawer.open {
+    @apply translate-x-0;
+  }
+  
+  /* Responsive grid utilities */
+  .responsive-grid {
+    @apply grid gap-4;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  @media (min-width: 640px) {
+    .responsive-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      @apply gap-6;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .responsive-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  
+  /* Mobile table styles */
+  .mobile-table-container {
+    @apply overflow-x-auto -mx-4 px-4;
+  }
+  
+  @media (min-width: 640px) {
+    .mobile-table-container {
+      @apply mx-0 px-0;
+    }
+  }
+  
+  /* Mobile-friendly spacing */
+  .mobile-spacing {
+    @apply space-y-4;
+  }
+  
+  @media (min-width: 640px) {
+    .mobile-spacing {
+      @apply space-y-6;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .mobile-spacing {
+      @apply space-y-8;
+    }
+  }
+  
+  /* KPI specific responsive spacing */
+  .kpi-spacing {
+    @apply space-y-4 sm:space-y-6 lg:space-y-8;
+  }
+  
+  .kpi-section-spacing {
+    @apply space-y-6 sm:space-y-8 lg:space-y-12;
+  }
+
+  /* Horizontal KPI Grid Layout - Single Row Design */
+  .kpi-grid-horizontal {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  @media (min-width: 640px) {
+    .kpi-grid-horizontal {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .kpi-grid-horizontal {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+  
+  /* Enhanced KPI card for horizontal layout */
+  .kpi-card-horizontal {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6 transition-all duration-200;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .kpi-card-horizontal:hover {
+    @apply shadow-md;
+  }
+  
+  .kpi-card-horizontal.kpi-card-featured {
+    @apply ring-2 ring-orange-100 bg-gradient-to-br from-orange-50 via-green-50 to-white shadow-lg;
+    border-left: 4px solid #FF6B35;
+  }
+  
+  /* AI-focused enhancements */
+  .ai-emphasis {
+    @apply bg-gradient-to-r from-orange-600 via-orange-500 to-green-600 bg-clip-text text-transparent;
+  }
+  
+  .ai-badge {
+    @apply bg-gradient-to-r from-orange-100 to-green-100 text-orange-800 border border-orange-200 animate-pulse;
+    animation-duration: 2s;
+  }
+  
+  .contract-focus {
+    @apply border-l-4 border-l-blue-500 bg-gradient-to-br from-blue-50 to-white;
+  }
+  
+  .urgency-indicator {
+    @apply border-l-4 border-l-orange-500 bg-gradient-to-br from-orange-50 to-yellow-50;
+  }
+  
+  .success-indicator {
+    @apply border-l-4 border-l-green-500 bg-gradient-to-br from-green-50 to-white;
+  }
+  
+  /* Priority breakdown responsive styles */
+  .priority-badges {
+    @apply flex flex-wrap gap-1 sm:gap-1.5;
+  }
+  
+  .priority-badge {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+    min-width: 60px;
+  }
+  
+  @media (max-width: 480px) {
+    .priority-badge {
+      @apply text-xs px-1.5 py-0.5;
+      min-width: 50px;
+    }
+  }
+  
+  /* Contract renewal preview responsive */
+  .contract-preview {
+    @apply space-y-2;
+  }
+  
+  .contract-preview-item {
+    @apply flex items-center justify-between gap-2 text-xs sm:text-sm;
+  }
+  
+  @media (max-width: 480px) {
+    .contract-preview-item {
+      @apply flex-col items-start gap-1;
+    }
+  }
+  
+  /* Loading state animations for KPIs */
+  .kpi-skeleton {
+    @apply animate-pulse;
+  }
+  
+  .kpi-skeleton-title {
+    @apply h-4 bg-gray-300 rounded w-3/4 mb-2 inline-block;
+  }
+  
+  .kpi-skeleton-value {
+    @apply h-8 sm:h-10 bg-gray-300 rounded w-1/2 mb-3;
+  }
+  
+  .kpi-skeleton-description {
+    @apply h-3 bg-gray-200 rounded w-full;
+  }
+  
+  /* Accessibility improvements */
+  .kpi-focus {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .kpi-interactive {
+      transition: none;
+    }
+    
+    .kpi-interactive:hover {
+      transform: none;
+    }
+    
+    .kpi-interactive:active {
+      transform: none;
+    }
+    
+    .skeleton-wave::after {
+      animation: none;
+    }
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .kpi-card {
+      @apply border-2 border-gray-900;
+    }
+    
+    .priority-badge {
+      @apply border border-current;
+    }
+  }
+  
+  /* IMPROVED PROFESSIONAL DASHBOARD DESIGN */
+  
+  /* KPI Cards - Professional and Compact */
+  .ultra-minimal-kpi {
+    height: 160px !important; /* Fixed height instead of min-height */
+    padding: 1.5rem !important; /* 24px instead of 3rem (48px) */
+    /* Fix: Ensure cards are always visible */
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Mobile optimization for KPI cards */
+  @media (max-width: 640px) {
+    .ultra-minimal-kpi {
+      height: 120px !important;
+      padding: 1rem !important; /* 16px on mobile */
+    }
+  }
+  
+  /* Tablet optimization */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .ultra-minimal-kpi {
+      height: 140px !important;
+      padding: 1.25rem !important; /* 20px on tablet */
+    }
+  }
+  
+  .ultra-minimal-action {
+    min-height: 200px !important; /* Reduced from 400px */
+    /* Reasonable padding for action cards */
+    padding: 2rem !important; /* Reduced from 3rem */
+  }
+  
+  @media (max-width: 640px) {
+    .ultra-minimal-action {
+      min-height: 180px !important;
+      padding: 1.5rem !important;
+    }
+  }
+  
+  /* Professional hover interactions - subtle and enterprise-friendly */
+  .ultra-minimal-kpi:hover {
+    @apply shadow-md border-gray-200 transition-all duration-200;
+    transform: translateY(-1px); /* Reduced hover movement */
+  }
+  
+  /* Professional Color Variant System */
+  .kpi-variant-success {
+    background: linear-gradient(135deg, hsl(142, 45%, 95%), white) !important;
+    border-left: 4px solid hsl(158, 64%, 52%) !important; /* emerald-600 */
+    color: hsl(140, 76%, 36%) !important; /* emerald-700 */
+  }
+
+  .kpi-variant-warning {
+    background: linear-gradient(135deg, hsl(45, 70%, 95%), white) !important;
+    border-left: 4px solid hsl(45, 93%, 47%) !important; /* amber-500 */
+    color: hsl(36, 84%, 30%) !important; /* amber-700 */
+  }
+
+  .kpi-variant-error {
+    background: linear-gradient(135deg, hsl(0, 60%, 95%), white) !important;
+    border-left: 4px solid hsl(356, 75%, 64%) !important; /* rose-500 */
+    color: hsl(356, 69%, 49%) !important; /* rose-700 */
+  }
+  
+  /* Text overflow protection utilities */
+  .kpi-value-protected {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+    display: inline-block !important;
+  }
+  
+  .kpi-title-protected {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    max-width: 100% !important;
+  }
+  
+  .kpi-description-protected {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    max-width: 100% !important;
+  }
+  
+  /* Mobile Optimization - Cards take 30% vs 74% of viewport */
+  @media (max-width: 640px) {
+    .dashboard-grid-3 {
+      grid-template-columns: 1fr !important;
+      gap: 1rem !important;
+      padding: 0 1rem !important; /* Ensure cards don't touch edges */
+    }
+    
+    .ultra-minimal-kpi {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 auto !important;
+      /* Cards will be constrained by parent container, not viewport width */
+    }
+    
+    /* Responsive text sizing for mobile */
+    .ultra-minimal-kpi .kpi-value {
+      font-size: 1.5rem !important; /* text-2xl for mobile */
+      line-height: 1.2 !important;
+    }
+    
+    .ultra-minimal-kpi h3 {
+      font-size: 0.625rem !important; /* text-xs for mobile */
+    }
+    
+    .ultra-minimal-kpi p {
+      font-size: 0.625rem !important; /* text-xs for mobile */
+    }
+  }
+  
+  /* Tablet responsive improvements */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .ultra-minimal-kpi .kpi-value {
+      font-size: 1.75rem !important; /* text-3xl for tablet */
+    }
+  }
+  
+  /* Enhanced accessibility for large text */
+  @media (prefers-reduced-motion: reduce) {
+    .ultra-minimal-kpi:hover {
+      transform: none !important;
+    }
+    
+    .ultra-minimal-kpi {
+      transition: none !important;
+    }
+  }
+  
+  /* High contrast mode improvements */
+  @media (prefers-contrast: high) {
+    .kpi-variant-success {
+      background: white !important;
+      border-left: 4px solid #000 !important;
+      color: #000 !important;
+    }
+    
+    .kpi-variant-warning {
+      background: white !important;
+      border-left: 4px solid #000 !important;
+      color: #000 !important;
+    }
+    
+    .kpi-variant-error {
+      background: white !important;
+      border-left: 4px solid #000 !important;
+      color: #000 !important;
+    }
+  }
+  
+  .ultra-minimal-kpi.cursor-pointer:hover {
+    @apply scale-[1.02];
+  }
+  
+  .ultra-minimal-kpi.cursor-pointer:active {
+    @apply scale-[0.98];
+  }
+  
+  /* Remove ALL decorative elements in ultra-minimal mode */
+  .ultra-minimal .priority-badges,
+  .ultra-minimal .contract-preview,
+  .ultra-minimal .ai-badge,
+  .ultra-minimal .trend-indicator,
+  .ultra-minimal .badge,
+  .ultra-minimal .icon,
+  .ultra-minimal .secondary-text {
+    @apply hidden !important;
+  }
+  
+  /* Maximum spacing for clarity - Apple/Google style */
+  .ultra-minimal-spacing {
+    @apply space-y-24 lg:space-y-32;
+  }
+  
+  /* Large touch targets optimized for all devices */
+  .ultra-minimal .action-item {
+    @apply min-h-[80px] lg:min-h-[96px] cursor-pointer;
+    padding: 2rem !important;
+    border-radius: 0.75rem !important;
+  }
+  
+  /* Enhanced focus states for accessibility */
+  .ultra-minimal-kpi:focus {
+    @apply outline-none ring-4 ring-orange-500/30 ring-offset-4;
+  }
+  
+  .ultra-minimal .action-item:focus {
+    @apply outline-none ring-2 ring-orange-500/50 ring-offset-2 ring-offset-white;
+  }
+  
+  /* Typography hierarchy for professional cards */
+  .ultra-minimal-kpi h3 {
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    color: rgb(107, 114, 128) !important; /* gray-500 */
+  }
+  
+  .ultra-minimal-kpi .kpi-value {
+    font-size: 1.5rem !important; /* text-2xl instead of 4rem */
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+  }
+  
+  @media (min-width: 640px) {
+    .ultra-minimal-kpi .kpi-value {
+      font-size: 1.875rem !important; /* text-3xl */
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .ultra-minimal-kpi .kpi-value {
+      font-size: 2.25rem !important; /* text-4xl instead of 5rem */
+    }
+  }
+  
+  .ultra-minimal-kpi p {
+    font-size: 0.75rem !important;
+    font-weight: 300 !important;
+    color: rgb(107, 114, 128) !important; /* gray-500 */
+  }
+  
+  /* Action section typography */
+  .ultra-minimal-action h2 {
+    font-size: 1.125rem !important;
+    font-weight: 500 !important;
+    color: rgb(17, 24, 39) !important; /* gray-900 */
+  }
+  
+  .ultra-minimal-action .action-item h3 {
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+  }
+  
+  .ultra-minimal-action .action-item p {
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+    color: rgb(107, 114, 128) !important; /* gray-500 */
+    line-height: 1.3 !important;
+  }
+  
+  /* Dark mode preparation */
+  @media (prefers-color-scheme: dark) {
+    .kpi-card {
+      @apply bg-gray-800 border-gray-700 text-white;
+    }
+    
+    .kpi-skeleton-title, .kpi-skeleton-value {
+      @apply bg-gray-600;
+    }
+    
+    .kpi-skeleton-description {
+      @apply bg-gray-700;
+    }
+    
+    .ultra-minimal-kpi {
+      @apply bg-gray-900 border-gray-800 text-white;
+    }
+    
+    .ultra-minimal-action {
+      @apply bg-gray-900 border-gray-800;
+    }
+  }
+
+  /* URGENT FIX: Force Settings submenu text visibility */
+  [class*="settings"] h1,
+  [class*="settings"] h2, 
+  [class*="settings"] h3,
+  [class*="settings"] label,
+  [class*="settings"] p,
+  [class*="settings"] span,
+  [class*="settings"] div {
+    color: #111827 !important; /* force dark gray */
+  }
+
+  /* Force submenu content visibility */
+  .settings-section h1,
+  .settings-section h2,
+  .settings-section h3,
+  .settings-section label,
+  .settings-section p,
+  .settings-section span,
+  .settings-section div {
+    color: #111827 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Emergency text visibility override for settings pages */
+  [data-page="settings"] *,
+  [data-route*="settings"] *,
+  .settings-container *,
+  .settings-layout * {
+    color: inherit !important;
+  }
+
+  /* Specific fixes for settings components */
+  [data-page="settings"] .text-white,
+  [data-route*="settings"] .text-white {
+    color: #111827 !important;
+  }
+
+  [data-page="settings"] .text-transparent,
+  [data-route*="settings"] .text-transparent {
+    color: #111827 !important;
+  }
+
+  /* Force visibility for any invisible text in settings */
+  [data-page="settings"] [style*="color: transparent"],
+  [data-page="settings"] [style*="color: white"],
+  [data-route*="settings"] [style*="color: transparent"],
+  [data-route*="settings"] [style*="color: white"] {
+    color: #111827 !important;
+  }
+
+  /* Broad sweep fixes for settings route */
+  [href="/settings"] *,
+  [aria-current*="page"][href*="settings"] *,
+  .settings-page *,
+  .settings-layout *,
+  .settings-container *,
+  body:has([href="/settings"]) * {
+    color: inherit !important;
+  }
+
+  /* Force all text elements in settings to be visible */
+  body:has([href="/settings"]) h1,
+  body:has([href="/settings"]) h2,
+  body:has([href="/settings"]) h3,
+  body:has([href="/settings"]) h4,
+  body:has([href="/settings"]) h5,
+  body:has([href="/settings"]) h6,
+  body:has([href="/settings"]) p,
+  body:has([href="/settings"]) label,
+  body:has([href="/settings"]) span,
+  body:has([href="/settings"]) div {
+    color: #111827 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Ultimate fallback - nuclear option for settings text */
+  .text-transparent,
+  [style*="color: transparent"],
+  [style*="color: white"] {
+    color: #111827 !important;
+  }
+
+  /* Final emergency override - force all text to be visible on settings pages */
+  .settings-page h1, .settings-page h2, .settings-page h3, .settings-page h4, .settings-page h5, .settings-page h6,
+  .settings-page p, .settings-page span, .settings-page label, .settings-page div,
+  [data-testid*="settings"] h1, [data-testid*="settings"] h2, [data-testid*="settings"] h3,
+  [data-testid*="settings"] p, [data-testid*="settings"] span, [data-testid*="settings"] label,
+  [data-testid*="settings"] div {
+    color: #111827 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Force text color inheritance for all settings elements */
+  body[data-route*="settings"] *, 
+  body:has([aria-current*="page"][href*="settings"]) *,
+  .main-content:has([href*="settings"]) * {
+    color: inherit !important;
+  }
+
+  /* Ensure no white or transparent text in settings */
+  body[data-route*="settings"] .text-white,
+  body[data-route*="settings"] .text-transparent,
+  body:has([aria-current*="page"][href*="settings"]) .text-white,
+  body:has([aria-current*="page"][href*="settings"]) .text-transparent {
+    color: #111827 !important;
+  }
+
+  /* Settings Submenu Active States */
+  .submenu-item-active {
+    background-color: #FFF7ED !important; /* orange-50 */
+    border-left: 3px solid #FF6B35 !important; /* orange accent */
+    color: #FF6B35 !important;
+    font-weight: 500 !important;
+    padding-left: 1rem !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .submenu-item-active:hover {
+    background-color: #FED7AA !important; /* orange-100 */
+    color: #EA580C !important; /* orange-600 */
+  }
+
+  /* Ensure submenu active state overrides other styles */
+  .settings-sidebar .submenu-item-active,
+  .settings-layout .submenu-item-active {
+    background-color: #FFF7ED !important;
+    border-left: 3px solid #FF6B35 !important;
+    color: #FF6B35 !important;
+    font-weight: 500 !important;
+  }
+
+  /* Fix for border-l-3 utility class */
+  .border-l-3 {
+    border-left-width: 3px !important;
+  }
+
+  /* Settings sticky layout utilities */
+  .settings-sticky-layout {
+    --header-height: 4rem;
+    --sidebar-width: 20rem;
+  }
+
+  .settings-container {
+    height: calc(100vh - var(--header-height));
+  }
+
+  .settings-scroll-area {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+  }
+
+  .settings-scroll-area::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .settings-scroll-area::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+  }
+
+  .settings-scroll-area::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+  }
+
+  .settings-scroll-area::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  /* Dark mode scrollbar support */
+  @media (prefers-color-scheme: dark) {
+    .settings-scroll-area {
+      scrollbar-color: #4b5563 #1f2937;
+    }
+
+    .settings-scroll-area::-webkit-scrollbar-track {
+      background: #1f2937;
+    }
+
+    .settings-scroll-area::-webkit-scrollbar-thumb {
+      background: #4b5563;
+    }
+
+    .settings-scroll-area::-webkit-scrollbar-thumb:hover {
+      background: #6b7280;
+    }
+  }
+}

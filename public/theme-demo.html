@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRIFT.AI - Light Orange Theme Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* DRIFT.AI Light Theme Color System - Identical to globals.css */
+        :root {
+            --background: 0 0% 100%; /* #FFFFFF - Main app background */
+            --foreground: 0 0% 15%; /* #262626 - Primary dark text */
+            --card: 0 0% 100%; /* #FFFFFF - White card background */
+            --card-foreground: 0 0% 15%; /* #262626 - Primary dark text */
+            --popover: 0 0% 100%; /* #FFFFFF - White popover background */
+            --popover-foreground: 0 0% 15%; /* #262626 - Primary dark text */
+            --primary: 14 100% 60%; /* #FF6B35 - Orange/Coral accent */
+            --primary-foreground: 0 0% 100%; /* White for text on primary */
+            --secondary: 0 0% 97%; /* #F8F9FA - Very light gray surface */
+            --secondary-foreground: 0 0% 45%; /* #737373 - Medium gray text */
+            --muted: 0 0% 96%; /* #F5F5F5 - Light gray surface */
+            --muted-foreground: 0 0% 45%; /* #737373 - Medium gray text */
+            --accent: 0 0% 96%; /* #F5F5F5 - Light gray accent surface */
+            --accent-foreground: 0 0% 15%; /* #262626 - Dark text on accent */
+            --destructive: 0 84% 60%; /* #EF4444 - Error Red */
+            --destructive-foreground: 0 0% 100%; /* White */
+            --border: 0 0% 90%; /* #E5E5E5 - Light borders */
+            --input: 0 0% 100%; /* #FFFFFF - White input background */
+            --ring: 14 100% 60%; /* #FF6B35 - Orange/Coral focus rings */
+            --radius: 0.75rem; /* 12px */
+        }
+
+        body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .bg-background { background-color: hsl(var(--background)); }
+        .bg-card { background-color: hsl(var(--card)); }
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .bg-secondary { background-color: hsl(var(--secondary)); }
+        .bg-accent { background-color: hsl(var(--accent)); }
+
+        .text-foreground { color: hsl(var(--foreground)); }
+        .text-primary { color: hsl(var(--primary)); }
+        .text-primary-foreground { color: hsl(var(--primary-foreground)); }
+        .text-muted-foreground { color: hsl(var(--muted-foreground)); }
+
+        .border-border { border-color: hsl(var(--border)); }
+        .border-primary { border-color: hsl(var(--primary)); }
+
+        .hover\:bg-accent:hover { background-color: hsl(var(--accent)); }
+        .hover\:bg-primary\/90:hover { background-color: hsl(var(--primary) / 0.9); }
+        .hover\:text-accent-foreground:hover { color: hsl(var(--accent-foreground)); }
+
+        .transition-all { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+
+        /* Hide sidebar on mobile initially */
+        @media (max-width: 1023px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+        }
+
+        /* Sidebar collapsed state */
+        .sidebar.collapsed { width: 4rem; }
+        .sidebar.collapsed .nav-text { display: none; }
+        .sidebar.collapsed .brand-text { display: none; }
+        .main-content.sidebar-collapsed { margin-left: 4rem; }
+    </style>
+</head>
+<body class="min-h-screen bg-background font-sans antialiased">
+    <div class="flex h-screen bg-background">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar lg:flex lg:flex-col lg:fixed lg:inset-y-0 w-70 lg:w-70 transition-all duration-300" style="width: 280px;">
+            <div class="relative flex h-full flex-col bg-card border-r border-border">
+                <!-- Header Section -->
+                <div class="flex h-16 items-center justify-between px-6 border-b border-border">
+                    <div class="flex items-center space-x-3">
+                        <!-- Brand Logo -->
+                        <div class="flex h-10 w-10 items-center justify-center bg-primary rounded-lg flex-shrink-0 shadow-lg">
+                            <span class="text-lg font-bold text-primary-foreground">D</span>
+                        </div>
+                        <!-- DRIFT.AI Text -->
+                        <div class="brand-text flex items-center">
+                            <h1 class="text-xl font-semibold text-foreground whitespace-nowrap">DRIFT.AI</h1>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Section -->
+                <nav class="flex-1 py-6 px-4">
+                    <div class="space-y-2">
+                        <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium min-h-12 rounded-xl bg-primary text-primary-foreground shadow-md">
+                            <span class="flex-shrink-0 h-5 w-5">📊</span>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium min-h-12 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-all">
+                            <span class="flex-shrink-0 h-5 w-5">👥</span>
+                            <span class="nav-text">Vendors</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium min-h-12 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-all">
+                            <span class="flex-shrink-0 h-5 w-5">📄</span>
+                            <span class="nav-text">Contracts</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium min-h-12 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-all">
+                            <span class="flex-shrink-0 h-5 w-5">📈</span>
+                            <span class="nav-text">Reports</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium min-h-12 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-all">
+                            <span class="flex-shrink-0 h-5 w-5">⚙️</span>
+                            <span class="nav-text">Settings</span>
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- Toggle Button -->
+                <button id="toggleBtn" class="absolute top-1/3 -right-6 flex h-16 w-6 items-center justify-center bg-card border border-border shadow-lg hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all text-muted-foreground border-l-0 rounded-r-lg hidden lg:flex">
+                    <span id="toggleIcon">◀</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main content area -->
+        <div id="mainContent" class="main-content flex flex-1 flex-col transition-all duration-300" style="margin-left: 280px;">
+            <!-- Header -->
+            <header class="flex h-16 items-center justify-between border-b border-border bg-background px-4 sm:px-6">
+                <div class="flex items-center space-x-4">
+                    <!-- Mobile hamburger menu -->
+                    <button id="mobileMenuBtn" class="lg:hidden min-h-11 min-w-11 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground">
+                        <span>☰</span>
+                    </button>
+                    <h1 class="text-lg font-semibold text-foreground">DRIFT.AI Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground">
+                        🔔
+                    </button>
+                    <button class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground">
+                        👤
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main content -->
+            <main class="flex-1 overflow-auto">
+                <div class="min-h-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+                    <div class="p-6">
+                        <h1 class="text-2xl font-bold text-foreground mb-4">DRIFT.AI Light Orange Theme Demo</h1>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="bg-card rounded-lg shadow-md p-6 border border-border">
+                                <h3 class="text-lg font-semibold text-foreground mb-2">🎨 Light Orange Theme</h3>
+                                <p class="text-muted-foreground">Beautiful light theme with orange (#FF6B35) accents. Clean white background with dark text for excellent readability.</p>
+                                <div class="mt-4 flex items-center gap-2">
+                                    <div class="w-4 h-4 bg-primary rounded-full"></div>
+                                    <span class="text-sm text-muted-foreground">Primary Orange</span>
+                                </div>
+                            </div>
+                            <div class="bg-card rounded-lg shadow-md p-6 border border-border">
+                                <h3 class="text-lg font-semibold text-foreground mb-2">✨ Perfect Sidebar</h3>
+                                <p class="text-muted-foreground">Fully working sidebar with collapse/expand functionality. Try the toggle button to test it!</p>
+                                <div class="mt-4">
+                                    <button class="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-all">
+                                        Test Button
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bg-card rounded-lg shadow-md p-6 border border-border">
+                                <h3 class="text-lg font-semibold text-foreground mb-2">🚀 Professional Design</h3>
+                                <p class="text-muted-foreground">Modern, clean interface following design best practices. Accessible and responsive across all devices.</p>
+                                <div class="mt-4 space-y-2">
+                                    <div class="h-2 bg-secondary rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 75%"></div>
+                                    </div>
+                                    <span class="text-sm text-muted-foreground">Theme implementation: 100%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional demonstration sections -->
+                        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-card rounded-lg shadow-md p-6 border border-border">
+                                <h3 class="text-lg font-semibold text-foreground mb-4">Color Palette</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-6 h-6 bg-background border border-border rounded"></div>
+                                        <span class="text-sm">Background: White (#FFFFFF)</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-6 h-6 bg-primary rounded"></div>
+                                        <span class="text-sm">Primary: Orange (#FF6B35)</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-6 h-6 bg-secondary rounded"></div>
+                                        <span class="text-sm">Secondary: Light Gray (#F8F9FA)</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-6 h-6 bg-accent rounded"></div>
+                                        <span class="text-sm">Accent: Lighter Gray (#F5F5F5)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-card rounded-lg shadow-md p-6 border border-border">
+                                <h3 class="text-lg font-semibold text-foreground mb-4">Interactive Elements</h3>
+                                <div class="space-y-3">
+                                    <button class="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-all">
+                                        Primary Button
+                                    </button>
+                                    <button class="w-full bg-secondary text-secondary-foreground px-4 py-2 rounded-md hover:bg-accent transition-all">
+                                        Secondary Button
+                                    </button>
+                                    <div class="p-3 bg-accent rounded-md border border-border">
+                                        <span class="text-sm text-accent-foreground">Accent surface example</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar toggle functionality
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        let isCollapsed = false;
+
+        // Desktop toggle
+        toggleBtn.addEventListener('click', () => {
+            isCollapsed = !isCollapsed;
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('sidebar-collapsed');
+                mainContent.style.marginLeft = '4rem';
+                sidebar.style.width = '4rem';
+                toggleIcon.textContent = '▶';
+            } else {
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('sidebar-collapsed');
+                mainContent.style.marginLeft = '280px';
+                sidebar.style.width = '280px';
+                toggleIcon.textContent = '◀';
+            }
+        });
+
+        // Mobile menu toggle
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024 && !sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

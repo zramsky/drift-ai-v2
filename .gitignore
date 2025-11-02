@@ -1,0 +1,159 @@
+# DRIFT.AI V2 - .gitignore
+# Enterprise-grade Next.js application
+
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+/.nyc_output
+/playwright-report/
+/test-results/
+/blob-report/
+
+# Next.js
+/.next/
+/out/
+/build
+/dist
+
+# Production
+/build
+*.tsbuildinfo
+
+# Miscellaneous
+.DS_Store
+*.pem
+Thumbs.db
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# Local Environment Files
+.env
+.env*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# IDE - IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+*.swp
+
+# IDE - Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Mac OS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Compiled CSS (generated from Tailwind)
+/src/app/compiled.css
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Lock files (keep package-lock.json for consistency)
+# Uncomment if using yarn or pnpm exclusively
+# yarn.lock
+# pnpm-lock.yaml
+
+# Playwright
+playwright/.cache/
+
+# Storybook
+storybook-static/
+
+# Bundle analyzer
+.next/analyze/
+
+# Sentry
+.sentryclirc
+
+# Firebase (legacy deployment)
+.firebase/
+.firebaserc
+firebase-debug.log
+firestore-debug.log
+
+# Certificates
+*.p12
+*.key
+*.cert
+*.crt
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+*.old
