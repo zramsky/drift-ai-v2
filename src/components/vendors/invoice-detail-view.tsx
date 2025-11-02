@@ -147,230 +147,6 @@ export function InvoiceDetailView({ vendorId, invoiceId, onBack }: InvoiceDetail
         </Badge>
       </div>
 
-      {/* Two-Column Top Section */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Invoice Details Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Invoice Details</CardTitle>
-            <CardDescription>
-              Basic invoice information and amounts
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Invoice Number
-                </label>
-                <p className="text-foreground mt-1 font-medium">
-                  {invoice.invoiceNumber}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Status
-                </label>
-                <div className="flex items-center gap-2 mt-1">
-                  {getStatusIcon(invoice.status)}
-                  <span className="capitalize">{invoice.status}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Invoice Date
-                </label>
-                <p className="text-foreground mt-1">
-                  {format(new Date(invoice.invoiceDate), 'MMM dd, yyyy')}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Due Date
-                </label>
-                <p className="text-foreground mt-1">
-                  {invoice.dueDate ? format(new Date(invoice.dueDate), 'MMM dd, yyyy') : 'Not specified'}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Subtotal
-                </label>
-                <p className="text-foreground mt-1 font-semibold">
-                  ${invoice.subtotal.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Tax Amount
-                </label>
-                <p className="text-foreground mt-1">
-                  ${(invoice.taxAmount || 0).toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })}
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Total Amount
-              </label>
-              <p className="text-foreground mt-1 text-xl font-bold">
-                ${invoice.totalAmount.toLocaleString('en-US', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Vendor Context Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Vendor Context</CardTitle>
-            <CardDescription>
-              Information about the vendor for this invoice
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center bg-brand-steel/10 rounded-lg">
-                <Building2 className="h-5 w-5 text-brand-steel" />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-foreground">
-                  {vendor.name}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {vendor.canonicalName}
-                </p>
-              </div>
-              <Badge variant={vendor.active ? 'success' : 'secondary'}>
-                {vendor.active ? 'Active' : 'Inactive'}
-              </Badge>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Business Type
-              </label>
-              <p className="text-foreground mt-1">
-                {vendor.businessDescription || 'Not specified'}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 pt-2">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Total Invoices
-                </label>
-                <p className="text-foreground mt-1 font-semibold">
-                  {vendor.totalInvoices}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Total Savings
-                </label>
-                <p className="text-foreground mt-1 font-semibold text-success">
-                  ${vendor.totalSavings.toLocaleString()}
-                </p>
-              </div>
-            </div>
-
-            <Button
-              variant="outline"
-              className="w-full mt-2"
-              onClick={onBack}
-            >
-              View Vendor Profile
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Line Items Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Line Items</CardTitle>
-          <CardDescription>
-            Detailed breakdown of invoice charges
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="text-center">Quantity</TableHead>
-                  <TableHead className="text-center">Unit</TableHead>
-                  <TableHead className="text-right">Rate</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {invoice.lineItems.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">
-                      {item.description}
-                    </TableCell>
-                    <TableCell className="text-center">{item.quantity}</TableCell>
-                    <TableCell className="text-center">{item.unit}</TableCell>
-                    <TableCell className="text-right">
-                      ${item.rate.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      })}
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      ${item.total.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      })}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Evidence Viewer Section (Placeholder) */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Evidence Viewer</CardTitle>
-          <CardDescription>
-            View supporting evidence and contract excerpts
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8">
-            <Eye className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-            <p className="text-muted-foreground mb-4">
-              Evidence viewer functionality will be integrated here
-            </p>
-            <Button onClick={handleViewEvidence} variant="outline">
-              <Eye className="h-4 w-4 mr-2" />
-              View Full Evidence
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Reconciliation Report */}
       {reconciliationReport ? (
         <Card>
@@ -511,6 +287,76 @@ export function InvoiceDetailView({ vendorId, invoiceId, onBack }: InvoiceDetail
           </CardContent>
         </Card>
       )}
+
+      {/* Line Items Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Line Items</CardTitle>
+          <CardDescription>
+            Detailed breakdown of invoice charges
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Description</TableHead>
+                  <TableHead className="text-center">Quantity</TableHead>
+                  <TableHead className="text-center">Unit</TableHead>
+                  <TableHead className="text-right">Rate</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {invoice.lineItems.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">
+                      {item.description}
+                    </TableCell>
+                    <TableCell className="text-center">{item.quantity}</TableCell>
+                    <TableCell className="text-center">{item.unit}</TableCell>
+                    <TableCell className="text-right">
+                      ${item.rate.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}
+                    </TableCell>
+                    <TableCell className="text-right font-medium">
+                      ${item.total.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Evidence Viewer Section (Placeholder) */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Evidence Viewer</CardTitle>
+          <CardDescription>
+            View supporting evidence and contract excerpts
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <Eye className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+            <p className="text-muted-foreground mb-4">
+              Evidence viewer functionality will be integrated here
+            </p>
+            <Button onClick={handleViewEvidence} variant="outline">
+              <Eye className="h-4 w-4 mr-2" />
+              View Full Evidence
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Action Buttons */}
       <div className="flex items-center justify-end gap-3 pt-4 border-t">

@@ -19,7 +19,7 @@ Nursing home operators manage hundreds of vendor contracts and process thousands
 ## Version Control & Change Tracking
 
 ### Current Version
-**Version**: 2.1.0
+**Version**: 2.2.0
 **Last Updated**: November 2, 2025
 **Status**: Active Development
 
@@ -49,6 +49,60 @@ Use this template when documenting changes:
 ```
 
 ### Recent Changes
+
+#### [2.2.0] - 2025-11-02
+**Changed By**: Claude Code
+**Type**: Enhancement - Invoice Detail View Simplification
+
+**Changes Made**:
+- Removed Invoice Details card from InvoiceDetailView component
+- Removed Vendor Context card from InvoiceDetailView component
+- Moved Reconciliation Report card to top position (immediately after invoice header)
+- Simplified invoice viewing experience with focus on AI analysis results
+
+**New Layout Structure**:
+```
+Before:                           After:
+├── Back Button                   ├── Back Button
+├── Invoice Header                ├── Invoice Header
+├── Two-Column Section            ├── Reconciliation Report (MOVED HERE)
+│   ├── Invoice Details (REMOVED)
+│   └── Vendor Context (REMOVED)
+├── Line Items Table              ├── Line Items Table
+├── Evidence Viewer               ├── Evidence Viewer
+├── Reconciliation Report (MOVED)
+└── Action Buttons                └── Action Buttons
+```
+
+**Files Modified**:
+- `/Users/zackram/Drift.AI-V2/src/components/vendors/invoice-detail-view.tsx` - Removed 153 lines, relocated reconciliation report
+
+**Files Created**:
+- `/Users/zackram/Drift.AI-V2/INVOICE_REFACTOR_BACKUP_2025-11-02.md` - Complete backup documentation with revert instructions
+
+**Impact**:
+- Reduced component from 535 lines to ~382 lines (~28.6% reduction)
+- Improved focus on critical information (reconciliation status shown first)
+- Eliminated redundancy (invoice details already in header, vendor accessible via back button)
+- Faster decision-making workflow for users reviewing invoices
+- Cleaner, less cluttered interface
+
+**Rationale**:
+- **Invoice Details Removal**: Information already displayed in header (number, date, amount, status)
+- **Vendor Context Removal**: Vendor name in breadcrumb, full context accessible via back button
+- **Reconciliation Priority**: AI analysis is the most important information for decision-making
+
+**Testing Notes**:
+- Zero TypeScript errors (`npm run type-check` passed)
+- Component compiles successfully
+- Dev server running on http://localhost:3001
+- Proper spacing maintained (space-y-6)
+- All existing functionality preserved
+
+**Revert Instructions**:
+- Comprehensive revert guide available in `/Users/zackram/Drift.AI-V2/INVOICE_REFACTOR_BACKUP_2025-11-02.md`
+- Git commit before changes: `05f65b4c9c58ca1113ac44e4a3373512c6849bca`
+- Simple revert command: `git checkout 05f65b4c9c58ca1113ac44e4a3373512c6849bca -- src/components/vendors/invoice-detail-view.tsx`
 
 #### [2.1.0] - 2025-11-02
 **Changed By**: Claude Code + Frontend Architect Agent

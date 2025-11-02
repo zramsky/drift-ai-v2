@@ -7,7 +7,7 @@
 ## 📍 Project Overview
 
 **Project Name**: DRIFT.AI V2 Contract Reconciliation Platform
-**Current Version**: 2.1.0
+**Current Version**: 2.2.0
 **Last Updated**: November 2, 2025
 **Status**: Production-ready, actively deployed
 
@@ -159,7 +159,17 @@
 
 ## 🔄 Recent Version History
 
-### v2.1.0 (Current - Nov 2, 2025) ⭐
+### v2.2.0 (Current - Nov 2, 2025) ⭐
+- Simplified invoice detail view by removing redundant cards
+- Removed Invoice Details card (info already in header)
+- Removed Vendor Context card (accessible via back button)
+- Moved Reconciliation Report to top position for better focus
+- Reduced component code by ~28.6% (153 lines removed)
+- Enhanced decision-making workflow with AI results shown first
+- **Testing**: Zero TypeScript errors, component compiles successfully
+- **Backup**: Complete revert guide in INVOICE_REFACTOR_BACKUP_2025-11-02.md
+
+### v2.1.0 (Nov 2, 2025)
 - Invoice restructuring with Content Replacement pattern
 - Invoices now live exclusively within vendor profiles
 - New components: VendorSummaryView, InvoiceDetailView
