@@ -19,7 +19,7 @@ Nursing home operators manage hundreds of vendor contracts and process thousands
 ## Version Control & Change Tracking
 
 ### Current Version
-**Version**: 2.0.4
+**Version**: 2.1.0
 **Last Updated**: November 2, 2025
 **Status**: Active Development
 
@@ -49,6 +49,75 @@ Use this template when documenting changes:
 ```
 
 ### Recent Changes
+
+#### [2.1.0] - 2025-11-02
+**Changed By**: Claude Code + Frontend Architect Agent
+**Type**: Major Feature - Invoice Restructuring & UI Enhancements
+
+**Changes Made**:
+- Implemented Content Replacement pattern for invoice navigation
+- Invoices now live exclusively within vendor profiles (no standalone invoice pages)
+- Created VendorSummaryView component (extracted from vendor detail page)
+- Created InvoiceDetailView component (displays invoices within vendor context)
+- Made invoice cards fully clickable in Invoices tab
+- Added prominent "Add Invoice" button to vendor profile header
+- Replaced "Edit Vendor Details" button with settings cog icon in Vendor Information card
+- Updated dashboard navigation to use new invoice URL pattern
+
+**New URL Structure**:
+- Vendor Summary: `/vendors/[id]`
+- Invoice Detail: `/vendors/[id]?invoice=[invoiceId]` (embedded within vendor context)
+- Old standalone `/invoices/[id]` pages removed from navigation
+
+**Files Created**:
+- `/Users/zackram/Drift.AI-V2/src/components/vendors/vendor-summary-view.tsx` - Reusable vendor summary component
+- `/Users/zackram/Drift.AI-V2/src/components/vendors/invoice-detail-view.tsx` - Invoice details within vendor context
+- `/Users/zackram/Drift.AI-V2/IMPLEMENTATION_BACKUP_2025-11-02.md` - Pre-implementation backup documentation
+- `/Users/zackram/Drift.AI-V2/TESTING_GUIDE_2025-11-02.md` - Comprehensive testing guide
+- `/Users/zackram/Drift.AI-V2/ROLLBACK_INSTRUCTIONS_2025-11-02.md` - Rollback procedures
+
+**Files Modified**:
+- `/Users/zackram/Drift.AI-V2/src/app/vendors/[id]/page.tsx` - Major refactor with conditional rendering for invoice view
+- `/Users/zackram/Drift.AI-V2/src/app/dashboard-improved.tsx` - Updated action items to use new URL pattern
+- `/Users/zackram/Drift.AI-V2/src/components/dashboard/action-required-section.tsx` - Added vendorId field to interface
+
+**Impact**:
+- Simplified information architecture: Invoices logically grouped under vendors
+- Reduced navigation complexity: No separate invoice section in app
+- Improved context preservation: Vendor information always visible when viewing invoices
+- Enhanced UX with clickable invoice cards (entire card vs small button)
+- Cleaner vendor header with single "Add Invoice" CTA
+- More intuitive settings access with cog icon in relevant card
+- Reduced codebase by ~276 lines through component extraction
+- URL structure supports deep linking and bookmarking
+
+**Testing Notes**:
+- Playwright MCP automated testing completed (7/9 tests passed)
+- Browser back/forward navigation verified
+- Direct URL access tested and working
+- Keyboard navigation (Tab, Enter, Space) functional
+- All responsive breakpoints tested (mobile, tablet, desktop)
+- Zero TypeScript errors
+- Zero console errors
+- Performance: Fast page transitions with no loading delays
+
+**Technical Details**:
+- Content Replacement Pattern: Conditional rendering based on URL searchParams
+- URL State Management: Using Next.js useSearchParams() and router.replace()
+- Component Extraction: Separated Summary tab into VendorSummaryView (14KB)
+- Invoice Detail: Complete component with evidence viewer and reconciliation (19KB)
+- Callback Props Pattern: Parent manages state, child triggers actions
+- Brand orange (#FF6B35) consistently applied to all CTAs and focus states
+- WCAG 2.1 AA accessibility compliance maintained throughout
+
+**Known Issues**:
+- Dashboard action cards reference vendor IDs that need data sync (VND-001 vs 1)
+- Will be addressed in future data consistency update
+
+**Migration Notes**:
+- Old `/invoices/[id]` routes archived but not deleted (safety)
+- Rollback instructions available in ROLLBACK_INSTRUCTIONS_2025-11-02.md
+- Git commit before changes: 6996b14
 
 #### [2.0.4] - 2025-11-02
 **Changed By**: Claude Code + Frontend Architect Agent

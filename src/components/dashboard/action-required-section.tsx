@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button'
 
 interface ActionItem {
   id: string
+  vendorId: string
   vendorName: string
   issueType: string
   description: string

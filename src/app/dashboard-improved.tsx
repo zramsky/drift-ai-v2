@@ -68,27 +68,30 @@ export default function ImprovedDashboard() {
   const actionItems = [
     {
       id: '1',
+      vendorId: 'VND-001',
       vendorName: 'Acme Medical Supplies',
       issueType: 'Price Variance',
       description: 'Invoice #INV-2024-0315 shows 12% price increase',
       actionLabel: 'Review' as const,
-      onAction: () => router.push('/invoices/INV-2024-0315')
+      onAction: () => router.push('/vendors/VND-001?invoice=INV-2024-0315')
     },
     {
       id: '2',
+      vendorId: 'VND-002',
       vendorName: 'HealthCare Products Inc',
       issueType: 'Missing Contract',
       description: 'No active contract found for recent invoices',
       actionLabel: 'Resolve' as const,
-      onAction: () => router.push('/vendors/VND-001')
+      onAction: () => router.push('/vendors/VND-002')
     },
     {
       id: '3',
+      vendorId: 'VND-003',
       vendorName: 'Quality Food Services',
       issueType: 'Quantity Discrepancy',
       description: 'Delivered quantity does not match invoice',
       actionLabel: 'Review' as const,
-      onAction: () => router.push('/invoices/INV-2024-0316')
+      onAction: () => router.push('/vendors/VND-003?invoice=INV-2024-0316')
     }
   ]
 

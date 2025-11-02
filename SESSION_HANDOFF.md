@@ -7,7 +7,7 @@
 ## 📍 Project Overview
 
 **Project Name**: DRIFT.AI V2 Contract Reconciliation Platform
-**Current Version**: 2.0.4
+**Current Version**: 2.1.0
 **Last Updated**: November 2, 2025
 **Status**: Production-ready, actively deployed
 
@@ -55,7 +55,36 @@
 
 ---
 
-## 📋 What We Just Completed (v2.0.4)
+## 📋 What We Just Completed (v2.1.0)
+
+### Invoice Restructuring - Content Replacement Pattern ✅
+- **Purpose**: Simplified information architecture by making invoices live exclusively within vendor profiles
+- **New Components**:
+  - `VendorSummaryView` - Extracted vendor summary (KPIs, cards, recent activity)
+  - `InvoiceDetailView` - Full invoice details within vendor context
+- **URL Structure Changed**:
+  - OLD: `/invoices/[id]` (standalone page)
+  - NEW: `/vendors/[id]?invoice=[invoiceId]` (embedded in vendor profile)
+- **Benefits**:
+  - Invoices always shown with vendor context
+  - Reduced navigation complexity
+  - Better information hierarchy
+  - URL supports bookmarking/sharing
+
+### UI Enhancements ✅
+- **Clickable Invoice Cards**: Entire card clickable in Invoices tab (not just small button)
+- **Add Invoice Button**: Prominent orange button in vendor profile header
+- **Settings Cog Icon**: Replaced "Edit Vendor Details" button with cog icon in Vendor Information card
+- **Improved Navigation**: Dashboard action cards navigate to vendor pages with invoice parameter
+
+### Technical Improvements ✅
+- Reduced codebase by ~276 lines through component extraction
+- Implemented callback props pattern for state management
+- Full keyboard navigation support (Tab, Enter, Space)
+- Brand orange (#FF6B35) consistently applied
+- WCAG 2.1 AA accessibility maintained
+
+## 📋 Previous Completion (v2.0.4)
 
 ### Interactive Dashboard Elements ✅
 - **Files**:
@@ -130,7 +159,17 @@
 
 ## 🔄 Recent Version History
 
-### v2.0.4 (Current - Nov 2, 2025) ⭐
+### v2.1.0 (Current - Nov 2, 2025) ⭐
+- Invoice restructuring with Content Replacement pattern
+- Invoices now live exclusively within vendor profiles
+- New components: VendorSummaryView, InvoiceDetailView
+- Clickable invoice cards in Invoices tab
+- Add Invoice button in vendor profile header
+- Settings cog icon replacing Edit button
+- URL structure: `/vendors/[id]?invoice=[invoiceId]`
+- **Deployed to production**: ✅
+
+### v2.0.4 (Nov 2, 2025)
 - Interactive Action Required cards (click to navigate to invoices)
 - Clickable Variance Vendors table rows (navigate to vendor detail)
 - Hover states with gray backgrounds
@@ -156,9 +195,16 @@
 
 **What's Working**:
 - ✅ Dashboard with redesigned KPI cards (v2.0.2)
-- ✅ Interactive Action Required cards - click to navigate to invoices (v2.0.4)
+- ✅ Invoice restructuring - invoices live in vendor profiles (v2.1.0)
+- ✅ Content Replacement pattern for invoice navigation (v2.1.0)
+- ✅ VendorSummaryView component with extracted summary content (v2.1.0)
+- ✅ InvoiceDetailView component for vendor-embedded invoice details (v2.1.0)
+- ✅ Clickable invoice cards in Invoices tab (v2.1.0)
+- ✅ Add Invoice button in vendor profile header (v2.1.0)
+- ✅ Settings cog icon for vendor editing (v2.1.0)
+- ✅ Interactive Action Required cards - navigate to vendors with invoice param (v2.1.0)
 - ✅ Clickable Variance Vendors table - navigate to vendor detail (v2.0.4)
-- ✅ Full keyboard navigation with brand orange focus rings (v2.0.4)
+- ✅ Full keyboard navigation with brand orange focus rings
 - ✅ Vendors list page with clickable rows
 - ✅ Vendor detail page with equal-height cards
 - ✅ Recent Activity as professional table
