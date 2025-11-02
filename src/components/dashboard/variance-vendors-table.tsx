@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { ArrowRight } from 'lucide-react'
 
@@ -40,6 +41,7 @@ export function VarianceVendorsTable({
   maxRows = 10,
   className
 }: VarianceVendorsTableProps) {
+  const router = useRouter()
   const displayVendors = vendors.slice(0, maxRows)
   const hasVendors = displayVendors.length > 0
 
@@ -138,7 +140,17 @@ export function VarianceVendorsTable({
                 {displayVendors.map((vendor) => (
                   <tr
                     key={vendor.id}
-                    className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors"
+                    className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => router.push(`/vendors/${vendor.id}`)}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        router.push(`/vendors/${vendor.id}`)
+                      }
+                    }}
+                    role="button"
+                    aria-label={`View details for ${vendor.vendorName}`}
                   >
                     <td className="py-3 text-sm font-medium text-gray-900">
                       {vendor.vendorName}

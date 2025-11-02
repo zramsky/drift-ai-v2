@@ -79,7 +79,17 @@ export function ActionRequiredSection({
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between gap-4 p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all"
+              className="flex items-center justify-between gap-4 p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm hover:bg-gray-50 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:ring-offset-2"
+              onClick={item.onAction}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  item.onAction()
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label={`${item.actionLabel} issue for ${item.vendorName}: ${item.issueType} - ${item.description}`}
             >
               {/* Left: Issue info */}
               <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -97,7 +107,10 @@ export function ActionRequiredSection({
 
               {/* Right: Action button */}
               <Button
-                onClick={item.onAction}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  item.onAction()
+                }}
                 className="bg-[#FF6B35] hover:bg-[#FF5722] text-white flex-shrink-0 focus:ring-2 focus:ring-[#FF6B35] focus:ring-offset-2"
                 size="sm"
                 aria-label={`${item.actionLabel} issue for ${item.vendorName}`}

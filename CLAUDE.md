@@ -19,8 +19,8 @@ Nursing home operators manage hundreds of vendor contracts and process thousands
 ## Version Control & Change Tracking
 
 ### Current Version
-**Version**: 2.0.3
-**Last Updated**: November 1, 2025
+**Version**: 2.0.4
+**Last Updated**: November 2, 2025
 **Status**: Active Development
 
 ### Change Log Format
@@ -49,6 +49,46 @@ Use this template when documenting changes:
 ```
 
 ### Recent Changes
+
+#### [2.0.4] - 2025-11-02
+**Changed By**: Claude Code + Frontend Architect Agent
+**Type**: Feature - Interactive Dashboard Elements
+
+**Changes Made**:
+- Made Action Required cards fully clickable (navigate to invoice detail pages)
+- Made Top Variance Vendors table rows fully clickable (navigate to vendor detail pages)
+- Added hover states with light gray backgrounds (hover:bg-gray-50)
+- Implemented keyboard navigation support (Tab, Enter, Space keys)
+- Added brand orange focus rings (#FF6B35) for accessibility
+- Implemented cursor pointer for visual feedback
+- Added descriptive ARIA labels for screen readers
+
+**Files Modified**:
+- `/Users/zackram/Drift.AI-V2/src/components/dashboard/action-required-section.tsx` - Made entire cards clickable with keyboard support
+- `/Users/zackram/Drift.AI-V2/src/components/dashboard/variance-vendors-table.tsx` - Made table rows clickable with Next.js router navigation
+
+**Impact**:
+- Improved user experience with intuitive click-anywhere navigation
+- Enhanced accessibility with full keyboard support and ARIA labels
+- Professional hover states matching existing design patterns
+- Consistent with vendor detail page table implementation
+- Zero breaking changes to existing functionality
+
+**Testing Notes**:
+- Tested clicking Action Required cards - successfully navigates to /invoices/[id]
+- Tested clicking Variance Vendor rows - successfully navigates to /vendors/[id]
+- Verified hover states display light gray background
+- Confirmed cursor changes to pointer on hover
+- Zero TypeScript errors
+- Zero console errors
+- All responsive breakpoints working correctly
+
+**Technical Details**:
+- Used Next.js useRouter for programmatic navigation
+- Implemented onClick and onKeyDown handlers
+- Added event.stopPropagation() for nested button in Action Required cards
+- Used role="button" and tabIndex={0} for accessibility
+- Consistent with existing clickable row pattern from vendor detail page
 
 #### [2.0.3] - 2025-11-01
 **Changed By**: Claude Code + Frontend Architect Agent
