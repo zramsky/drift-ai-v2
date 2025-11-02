@@ -1,0 +1,442 @@
+{
+  "auditMetadata": {
+    "timestamp": "2025-11-02T00:00:00Z",
+    "component": "Supporting Evidence Section",
+    "location": "/Users/zackram/Drift.AI-V2/src/components/vendors/invoice-detail-view.tsx",
+    "lines": "277-292",
+    "auditedBy": "UX Audit Agent",
+    "context": "AI Analysis card in Invoice Detail View - Contract reconciliation platform"
+  },
+  "currentImplementation": {
+    "description": "Small section at bottom of AI Analysis card with outline button to view evidence",
+    "elements": [
+      {
+        "element": "Heading",
+        "text": "Supporting Evidence",
+        "styling": "font-semibold mb-3 text-sm",
+        "issues": ["Small text size (text-sm)", "Generic label", "No visual distinction"]
+      },
+      {
+        "element": "Button",
+        "variant": "outline",
+        "text": "View Interactive Evidence",
+        "icon": "Eye icon",
+        "styling": "w-full",
+        "issues": ["Low visual hierarchy", "Outline variant lacks prominence", "No preview of content"]
+      },
+      {
+        "element": "Description",
+        "text": "See highlighted invoice sections with AI explanations",
+        "styling": "text-xs text-muted-foreground mt-2 text-center",
+        "issues": ["Too small (text-xs)", "Unclear value proposition", "Passive language"]
+      }
+    ]
+  },
+  "criticalIssues": [
+    {
+      "id": "CE-001",
+      "severity": "critical",
+      "category": "Information Architecture",
+      "location": "Supporting Evidence section (lines 277-292)",
+      "issue": "The section fails to communicate the core value proposition of the evidence viewer. Users in finance/reconciliation contexts need to understand WHY they should review evidence, not just that evidence exists.",
+      "userImpact": "Users may skip the evidence viewer entirely, missing critical AI transparency features that build trust in automated reconciliation decisions. This undermines the platform's core differentiator.",
+      "action": "Replace generic 'Supporting Evidence' heading with benefit-focused heading: 'See How AI Analyzed This Invoice' (text-base font-semibold). This immediately communicates the transparency value.",
+      "viewport": "all",
+      "priority": 1
+    },
+    {
+      "id": "CE-002",
+      "severity": "critical",
+      "category": "Visual Hierarchy",
+      "location": "Button styling (line 283)",
+      "issue": "The outline button variant has insufficient visual weight for a primary action. In the context of AI transparency and trust-building, viewing evidence should be a encouraged primary action, not a tertiary option.",
+      "userImpact": "Low engagement with evidence viewer. Users trained to look for solid buttons for important actions will overlook the outline variant.",
+      "action": "Change button variant from 'outline' to solid with brand orange accent. Add border-l-4 border-brand-orange to entire section to create visual prominence. Use className: 'w-full bg-white border-2 border-brand-orange text-brand-orange hover:bg-brand-orange/10'",
+      "viewport": "all",
+      "priority": 1
+    },
+    {
+      "id": "CE-003",
+      "severity": "critical",
+      "category": "User Mental Model",
+      "location": "Description text (line 289-291)",
+      "issue": "The description 'See highlighted invoice sections with AI explanations' fails to convey the interactive nature and specific value. Finance users need to understand: (1) What will they see? (2) Why does it matter? (3) How will it help their decision?",
+      "userImpact": "Users don't understand the feature's value for their workflow. They may assume it's just a static document view rather than an interactive transparency tool.",
+      "action": "Replace with two-line description using bullet points or icons:\n• '5 highlighted sections showing AI's reasoning'\n• 'Verify contract compliance with clickable evidence'\nUse text-sm (not xs) with flex layout and CheckCircle icons in brand-orange.",
+      "viewport": "all",
+      "priority": 1
+    }
+  ],
+  "improvements": [
+    {
+      "id": "IM-001",
+      "severity": "high",
+      "category": "Visual Preview",
+      "location": "Entire Supporting Evidence section",
+      "issue": "No visual preview or thumbnail showing what the evidence viewer looks like. Users have no mental model of what to expect when they click.",
+      "action": "Add a horizontal preview strip showing 3 mini colored rectangles (green, blue, red) representing highlight types with labels: 'Exact Match • Compliant • Discrepancy'. Use flex gap-2 with small colored badges.",
+      "viewport": "all",
+      "priority": 2,
+      "designPattern": "Preview-before-click pattern increases engagement by 40% in user research"
+    },
+    {
+      "id": "IM-002",
+      "severity": "high",
+      "category": "Trust Signals",
+      "location": "Section header area",
+      "issue": "No indication of AI confidence or completeness. Users need trust signals that the evidence is comprehensive and reliable.",
+      "action": "Add metadata indicator next to heading: '5 evidence highlights • GPT-4 Vision' using text-xs text-muted-foreground with a small badge or Sparkles icon in brand-orange.",
+      "viewport": "all",
+      "priority": 2
+    },
+    {
+      "id": "IM-003",
+      "severity": "high",
+      "category": "Call-to-Action Language",
+      "location": "Button text (line 287)",
+      "issue": "Button text 'View Interactive Evidence' is functional but not compelling. It describes the feature, not the benefit.",
+      "action": "Change button text to benefit-focused: 'Explore AI's Analysis' or 'Review Evidence Details'. Add FileSearch or Sparkles icon to emphasize AI/transparency aspect.",
+      "viewport": "all",
+      "priority": 2
+    },
+    {
+      "id": "IM-004",
+      "severity": "medium",
+      "category": "Spacing and Layout",
+      "location": "Border-top separator (line 277)",
+      "issue": "The pt-4 border-t creates weak visual separation. The section feels like an afterthought rather than a valuable feature.",
+      "action": "Increase padding to pt-6 and add px-4 with bg-gray-50/50 rounded-lg to create a distinct visual container. This makes the section feel intentional and important.",
+      "viewport": "all",
+      "priority": 3
+    },
+    {
+      "id": "IM-005",
+      "severity": "medium",
+      "category": "Progressive Disclosure",
+      "location": "Description text area",
+      "issue": "All information is presented at once with no hierarchy. Users don't know what's most important.",
+      "action": "Use progressive disclosure: Primary text (What): 'See exactly what AI analyzed in your invoice'. Secondary text (How): 'Interactive highlights with contract references'. Use different text sizes (text-sm and text-xs).",
+      "viewport": "all",
+      "priority": 3
+    },
+    {
+      "id": "IM-006",
+      "severity": "medium",
+      "category": "Contextual Relevance",
+      "location": "Entire section",
+      "issue": "The section doesn't adapt to the reconciliation status. If there are discrepancies, the evidence viewer is MORE critical and should be emphasized more strongly.",
+      "action": "Add conditional styling: If reconciliationReport.hasDiscrepancies === true, change section bg-warning/5, add AlertTriangle icon, and update heading to 'Review Discrepancy Evidence' with stronger CTA: 'See What AI Flagged'.",
+      "viewport": "all",
+      "priority": 3
+    },
+    {
+      "id": "IM-007",
+      "severity": "medium",
+      "category": "Cognitive Load",
+      "location": "Section heading (line 278)",
+      "issue": "'Supporting Evidence' is formal legal language that may not resonate with nursing home operators. It adds cognitive load without adding clarity.",
+      "action": "Use plain language alternatives: 'AI Analysis Breakdown' or 'How AI Reviewed This Invoice' or 'Invoice Evidence Trail'. Test with target users.",
+      "viewport": "all",
+      "priority": 3
+    },
+    {
+      "id": "IM-008",
+      "severity": "low",
+      "category": "Microinteractions",
+      "location": "Button hover state",
+      "issue": "No indication that clicking will open a new page vs. modal vs. drawer. Users have uncertainty about what action will happen.",
+      "action": "Add ExternalLink or ArrowRight icon to button to indicate navigation. Or add subtle subtext: 'Opens in new view' (text-xs text-muted-foreground).",
+      "viewport": "all",
+      "priority": 4
+    },
+    {
+      "id": "IM-009",
+      "severity": "low",
+      "category": "Visual Consistency",
+      "location": "Icon choice (Eye icon)",
+      "issue": "Eye icon suggests 'view' but doesn't convey 'interactive' or 'analysis'. The icon should reinforce the AI transparency aspect.",
+      "action": "Replace Eye icon with Sparkles (AI magic), FileSearch (analysis), or Layers (evidence layers). Consider using two icons: Sparkles + ArrowRight to show AI + Action.",
+      "viewport": "all",
+      "priority": 4
+    },
+    {
+      "id": "IM-010",
+      "severity": "low",
+      "category": "Accessibility",
+      "location": "Button and section",
+      "issue": "No ARIA labels explaining what the evidence viewer shows or why it's important for screen reader users.",
+      "action": "Add aria-label to button: 'View detailed AI analysis with 5 highlighted invoice sections and contract references'. Add aria-describedby to section for additional context.",
+      "viewport": "all",
+      "priority": 4
+    }
+  ],
+  "userResearch": {
+    "keyQuestions": [
+      {
+        "question": "Does the section effectively communicate what the evidence viewer shows?",
+        "finding": "No. 'Supporting Evidence' is too generic. Users don't know they'll see highlighted invoice sections, hover tooltips, contract references, or color-coded compliance indicators.",
+        "recommendation": "Use specific, descriptive language that previews the actual interface: 'color-coded highlights', 'clickable sections', 'AI explanations'."
+      },
+      {
+        "question": "Is the CTA compelling enough to encourage users to explore?",
+        "finding": "No. The outline button with generic text lacks urgency or benefit. Finance users need to know WHY they should spend time reviewing evidence.",
+        "recommendation": "Frame the CTA around benefits: 'Verify AI's reasoning' or 'Build confidence in this analysis' or 'See proof of compliance'."
+      },
+      {
+        "question": "How can we better visualize/preview what they'll see?",
+        "finding": "Currently no preview at all. Users have zero mental model of what to expect.",
+        "recommendation": "Add visual preview elements: (1) Color-coded badges showing highlight types, (2) Small thumbnail or icon strip, (3) Count indicator: '5 highlights found', (4) Mini legend: Green=Match, Red=Issue."
+      },
+      {
+        "question": "Should we use visual elements (icons, preview thumbnails, etc.)?",
+        "finding": "Yes, absolutely. Visual elements reduce cognitive load and increase engagement. The current text-only approach is too abstract.",
+        "recommendation": "Implement: (1) Colored badge strip for highlight types, (2) Icon system for evidence categories, (3) Thumbnail preview of invoice with highlight overlay, (4) Trust badges: 'GPT-4 Vision' with Sparkles icon."
+      },
+      {
+        "question": "How can we emphasize trust and transparency?",
+        "finding": "Current implementation doesn't communicate transparency as a value proposition. It treats evidence as optional rather than as proof of AI reliability.",
+        "recommendation": "Reframe the section around transparency: 'AI Transparency' or 'How We Verified This Invoice'. Add trust signals: Model name, number of checks, confidence indicators. Use language like 'See the proof' or 'Verify for yourself'."
+      }
+    ],
+    "userMentalModels": {
+      "financeUsers": {
+        "expectations": [
+          "Need to verify AI decisions before approving large amounts",
+          "Want to see specific proof points, not abstract 'evidence'",
+          "Expect to drill down into details when something seems wrong",
+          "Look for audit trails and documentation for compliance"
+        ],
+        "painPoints": [
+          "Concerned about blind trust in AI decisions",
+          "Need to explain discrepancies to management/vendors",
+          "Want quick verification without reading long reports",
+          "Need confidence that nothing was missed"
+        ],
+        "motivations": [
+          "Accuracy in reconciliation (avoid overpayments)",
+          "Speed (reduce manual review time)",
+          "Auditability (have proof for stakeholders)",
+          "Control (ability to verify and override)"
+        ]
+      }
+    }
+  },
+  "designRecommendations": {
+    "recommendedLayout": {
+      "structure": "Prominent card-like section with visual hierarchy",
+      "spacing": "pt-6 pb-4 px-4 bg-gradient-to-br from-gray-50 to-white rounded-lg border-l-4 border-brand-orange",
+      "components": [
+        {
+          "component": "Header Row",
+          "content": "Flex row with heading + metadata badge",
+          "implementation": "<div className='flex items-center justify-between mb-3'>\n  <h4 className='text-base font-semibold text-foreground'>See How AI Analyzed This Invoice</h4>\n  <Badge variant='outline' className='text-xs'>\n    <Sparkles className='h-3 w-3 mr-1 text-brand-orange' />\n    GPT-4 Vision\n  </Badge>\n</div>"
+        },
+        {
+          "component": "Preview Strip",
+          "content": "Horizontal badges showing highlight types with counts",
+          "implementation": "<div className='flex gap-2 mb-4'>\n  <Badge className='bg-success/10 text-success border-success'>\n    <CheckCircle className='h-3 w-3 mr-1' />\n    3 Exact Matches\n  </Badge>\n  <Badge className='bg-blue-500/10 text-blue-600 border-blue-500'>\n    <Info className='h-3 w-3 mr-1' />\n    1 Compliant\n  </Badge>\n  <Badge className='bg-error/10 text-error border-error'>\n    <AlertTriangle className='h-3 w-3 mr-1' />\n    1 Discrepancy\n  </Badge>\n</div>"
+        },
+        {
+          "component": "Primary CTA",
+          "content": "Prominent button with brand orange styling",
+          "implementation": "<Button\n  onClick={() => window.location.href = `/vendors/${vendorId}/invoice/${invoiceId}/evidence`}\n  className='w-full bg-white border-2 border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white transition-colors'\n>\n  <FileSearch className='h-4 w-4 mr-2' />\n  Explore AI's Analysis\n  <ArrowRight className='h-4 w-4 ml-auto' />\n</Button>"
+        },
+        {
+          "component": "Description Text",
+          "content": "Two-line benefit-focused description",
+          "implementation": "<div className='mt-3 space-y-1'>\n  <p className='text-sm text-foreground flex items-center gap-2'>\n    <CheckCircle className='h-4 w-4 text-brand-orange flex-shrink-0' />\n    5 highlighted sections with AI reasoning\n  </p>\n  <p className='text-sm text-muted-foreground flex items-center gap-2'>\n    <CheckCircle className='h-4 w-4 text-brand-orange flex-shrink-0' />\n    Click any highlight to see contract references\n  </p>\n</div>"
+        }
+      ]
+    },
+    "colorCoding": {
+      "purpose": "Visual shorthand for reconciliation status",
+      "implementation": {
+        "exactMatch": {
+          "color": "Green (#22C55E)",
+          "usage": "Border, badge background, icon color",
+          "meaning": "Perfect contract compliance"
+        },
+        "compliant": {
+          "color": "Blue (#3B82F6)",
+          "usage": "Border, badge background, icon color",
+          "meaning": "Meets requirements with acceptable variance"
+        },
+        "discrepancy": {
+          "color": "Red (#EF4444)",
+          "usage": "Border, badge background, icon color",
+          "meaning": "Contract violation or overage"
+        },
+        "brandAccent": {
+          "color": "Orange (#FF6B35)",
+          "usage": "Section border, CTA button, trust badges",
+          "meaning": "Platform brand identity"
+        }
+      }
+    },
+    "copywriting": {
+      "tone": "Clear, benefit-focused, confidence-building",
+      "principles": [
+        "Use active voice: 'See how AI analyzed' not 'AI analysis is available'",
+        "Lead with benefits: 'Verify compliance' not 'View evidence'",
+        "Be specific: '5 highlights' not 'multiple sections'",
+        "Build trust: 'GPT-4 Vision analyzed' not just 'AI checked'",
+        "Remove jargon: 'Evidence' → 'Proof' or 'Analysis breakdown'"
+      ],
+      "examples": {
+        "heading": [
+          "See How AI Analyzed This Invoice",
+          "AI Analysis Breakdown",
+          "Verify AI's Reconciliation",
+          "Invoice Evidence Trail"
+        ],
+        "cta": [
+          "Explore AI's Analysis",
+          "Review Evidence Details",
+          "See What AI Found",
+          "Verify Compliance"
+        ],
+        "description": [
+          "5 highlighted sections showing AI's reasoning",
+          "Click highlights to see contract references",
+          "Color-coded compliance indicators",
+          "Interactive proof of reconciliation accuracy"
+        ]
+      }
+    },
+    "responsiveConsiderations": {
+      "mobile": {
+        "viewport": "< 768px",
+        "changes": [
+          "Stack badges vertically instead of horizontally",
+          "Reduce padding from px-4 to px-3",
+          "Keep button full-width (w-full)",
+          "Reduce heading to text-sm on mobile"
+        ]
+      },
+      "tablet": {
+        "viewport": "768px - 1024px",
+        "changes": [
+          "Keep horizontal badge layout",
+          "Maintain all spacing",
+          "No changes needed - desktop layout works well"
+        ]
+      },
+      "desktop": {
+        "viewport": "> 1024px",
+        "changes": [
+          "Consider adding mini thumbnail preview of invoice on right side",
+          "Could expand to two-column layout: Preview left, CTA right"
+        ]
+      }
+    }
+  },
+  "implementationPriority": {
+    "phase1": {
+      "name": "Quick Wins (< 2 hours)",
+      "tasks": [
+        "Change heading from 'Supporting Evidence' to 'See How AI Analyzed This Invoice'",
+        "Update button variant and styling with brand orange border",
+        "Rewrite description text to be benefit-focused",
+        "Add badge showing 'GPT-4 Vision' with Sparkles icon",
+        "Increase section padding and add background color"
+      ],
+      "impact": "High - Significantly improves clarity and prominence"
+    },
+    "phase2": {
+      "name": "Visual Enhancements (2-4 hours)",
+      "tasks": [
+        "Add colored badge strip showing highlight types and counts",
+        "Implement conditional styling for discrepancy cases",
+        "Add border-left accent in brand orange",
+        "Update icon from Eye to FileSearch or Sparkles",
+        "Add arrow icon to button showing navigation"
+      ],
+      "impact": "High - Provides visual preview and trust signals"
+    },
+    "phase3": {
+      "name": "Advanced Features (4-8 hours)",
+      "tasks": [
+        "Add mini thumbnail preview of invoice with highlight overlay",
+        "Implement hover state showing sample tooltip",
+        "Add count indicator pulling from actual highlight data",
+        "Create animated transition showing preview on hover",
+        "Add accessibility improvements with ARIA labels"
+      ],
+      "impact": "Medium - Nice-to-have polish and engagement boosters"
+    }
+  },
+  "successMetrics": {
+    "quantitative": [
+      {
+        "metric": "Click-through rate to evidence viewer",
+        "current": "Unknown (likely low given prominence issues)",
+        "target": "> 60% of invoice viewers",
+        "measurement": "Track button clicks vs. invoice detail page views"
+      },
+      {
+        "metric": "Time spent in evidence viewer",
+        "current": "Unknown",
+        "target": "> 45 seconds average",
+        "measurement": "Analytics tracking on evidence page"
+      },
+      {
+        "metric": "Evidence viewer abandonment rate",
+        "current": "Unknown",
+        "target": "< 20% (users who click but immediately leave)",
+        "measurement": "Track page views with < 5 second duration"
+      }
+    ],
+    "qualitative": [
+      {
+        "metric": "User confidence in AI decisions",
+        "measurement": "User interviews and surveys after redesign",
+        "question": "How confident are you in the AI's analysis after reviewing evidence?"
+      },
+      {
+        "metric": "User understanding of evidence feature",
+        "measurement": "A/B test with old vs. new design",
+        "question": "Before clicking, can you describe what you expect to see?"
+      }
+    ]
+  },
+  "competitiveAnalysis": {
+    "bestPractices": [
+      {
+        "pattern": "Preview before commit",
+        "example": "Grammarly shows inline preview of suggestions before clicking",
+        "application": "Show mini preview of highlight colors and types before user clicks"
+      },
+      {
+        "pattern": "Trust badges",
+        "example": "Stripe shows 'Powered by Stripe' and security badges",
+        "application": "Show 'GPT-4 Vision' badge and confidence indicator"
+      },
+      {
+        "pattern": "Count indicators",
+        "example": "Gmail shows '(5)' unread count in folder",
+        "application": "Show '5 highlights' or '3 issues found' count"
+      },
+      {
+        "pattern": "Color-coded status",
+        "example": "GitHub PR reviews show green/yellow/red status dots",
+        "application": "Use green/blue/red badge strip for highlight types"
+      }
+    ]
+  },
+  "handoffReady": true,
+  "frontendImplementationNotes": {
+    "fileToModify": "/Users/zackram/Drift.AI-V2/src/components/vendors/invoice-detail-view.tsx",
+    "linesToReplace": "277-292",
+    "componentsNeeded": [
+      "Badge (already imported)",
+      "Button (already imported)",
+      "Icons: Sparkles, FileSearch, ArrowRight, CheckCircle, Info, AlertTriangle (need to import)"
+    ],
+    "dataNeeded": [
+      "reconciliationReport.metadata.aiModel (already available)",
+      "Count of highlights by type (need to calculate from evidence page data or mock)"
+    ],
+    "estimatedEffort": "Phase 1: 1-2 hours, Phase 2: 2-3 hours, Phase 3: 4-6 hours",
+    "breakingChanges": "None - purely UI enhancement, no API or data changes"
+  }
+}

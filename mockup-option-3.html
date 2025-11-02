@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option 3: High-Urgency Variant - DRIFT.AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        @keyframes pulse-warning {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+        .pulse-warning {
+            animation: pulse-warning 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">DRIFT.AI - Option 3: High-Urgency Variant</h1>
+            <p class="text-gray-600">Alert-focused design when discrepancies are detected</p>
+        </div>
+
+        <!-- AI Analysis Card -->
+        <div class="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
+            <!-- Card Header -->
+            <div class="mb-6">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">AI Analysis</h2>
+                <p class="text-gray-600 text-lg">GPT-4 Vision rationale and processing details</p>
+            </div>
+
+            <!-- AI Rationale Box -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-6 border border-gray-200">
+                <p class="text-gray-700 text-lg italic leading-relaxed">
+                    "Invoice reconciliation against contract CON-2024-001 reveals a quantity discrepancy on line item #3. The invoiced quantity (800 units) exceeds the contracted maximum (500 units) by 300 units."
+                </p>
+            </div>
+
+            <!-- Processing Metadata -->
+            <div class="flex gap-6 text-sm text-gray-600 mb-8 pb-6 border-b border-gray-200">
+                <div>
+                    <span class="font-medium">Processing time:</span> 2.3s
+                </div>
+                <div>
+                    <span class="font-medium">Model:</span> claude-3.5-sonnet
+                </div>
+            </div>
+
+            <!-- Supporting Evidence Section - OPTION 3 (High Urgency) -->
+            <div class="border-l-4 border-red-500 bg-yellow-50 rounded-r-lg p-6 relative">
+                <!-- Trust Badge - Top Right -->
+                <div class="absolute top-4 right-4 flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-full px-3 py-1">
+                    <span class="text-purple-600">✨</span>
+                    <span class="text-purple-700 text-xs font-semibold">GPT-4</span>
+                </div>
+
+                <!-- Section Heading -->
+                <h3 class="text-base font-semibold text-gray-900 mb-4 pr-24 flex items-center gap-2">
+                    <span class="text-red-500 text-lg">⚠</span>
+                    <span>Review Discrepancy Evidence</span>
+                </h3>
+
+                <!-- Urgent Banner -->
+                <div class="bg-red-100 border-2 border-red-400 rounded-lg p-4 mb-5 pulse-warning">
+                    <div class="flex items-center gap-3">
+                        <span class="text-red-600 text-2xl">⚠</span>
+                        <div>
+                            <p class="text-red-800 font-bold text-sm uppercase tracking-wide">
+                                1 DISCREPANCY FOUND - Review Required
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Issue Preview -->
+                <div class="bg-white border-2 border-red-200 rounded-lg p-4 mb-5">
+                    <p class="text-sm font-medium text-gray-700 mb-1">Detected Issue:</p>
+                    <p class="text-red-700 font-semibold">
+                        Quantity exceeds contract limit by 300 units
+                    </p>
+                    <p class="text-gray-600 text-sm mt-2">
+                        Line Item #3: 800 units invoiced vs. 500 units contracted
+                    </p>
+                </div>
+
+                <!-- CTA Button -->
+                <button class="w-full bg-white border-2 border-red-500 text-red-600 font-semibold py-3 px-6 rounded-lg hover:bg-red-50 transition-colors duration-200 mb-3 flex items-center justify-center gap-2 text-base shadow-sm">
+                    <span>👁</span>
+                    <span>See What AI Flagged</span>
+                    <span>→</span>
+                </button>
+
+                <!-- Action Required Note -->
+                <div class="flex items-start gap-2 text-sm text-gray-700 bg-yellow-100 border border-yellow-300 rounded-lg p-3">
+                    <span class="text-yellow-600 mt-0.5">⚡</span>
+                    <span>
+                        <strong>Action Required:</strong> Review highlighted discrepancy and contract terms before approving invoice
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Notes -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h4 class="font-semibold text-blue-900 mb-2">Design Notes - Option 3:</h4>
+            <ul class="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                <li>Red left border and yellow background for high-urgency state</li>
+                <li>Pulsing warning banner to draw immediate attention</li>
+                <li>Specific issue preview showing exact discrepancy details</li>
+                <li>Red-themed CTA button emphasizing review action</li>
+                <li>Action required notice at bottom for clear next steps</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

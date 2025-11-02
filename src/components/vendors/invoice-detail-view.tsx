@@ -119,7 +119,7 @@ export function InvoiceDetailView({ vendorId, invoiceId, onBack }: InvoiceDetail
         </Button>
       </div>
 
-      {/* Invoice Header */}
+      {/* Invoice Header - v2.4.0 APPROVAL WORKFLOW CHANGES START */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center bg-brand-steel/10 rounded-lg">
@@ -135,13 +135,36 @@ export function InvoiceDetailView({ vendorId, invoiceId, onBack }: InvoiceDetail
                 maximumFractionDigits: 2
               })}
             </p>
+            <div className="mt-2">
+              <Badge variant={getStatusColor(invoice.status)}>
+                {getStatusIcon(invoice.status)}
+                <span className="ml-2 capitalize">{invoice.status}</span>
+              </Badge>
+            </div>
           </div>
         </div>
-        <Badge variant={getStatusColor(invoice.status)}>
-          {getStatusIcon(invoice.status)}
-          <span className="ml-2 capitalize">{invoice.status}</span>
-        </Badge>
+        {/* v2.4.0: Added approval action buttons to header */}
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={() => {
+              window.location.href = `/vendors/${vendorId}/invoice/${invoiceId}/evidence`
+            }}
+            variant="outline"
+            className="border-brand-orange text-brand-orange hover:bg-brand-orange/10"
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            Review Discrepancies
+          </Button>
+          <Button
+            onClick={handleApprove}
+            className="bg-brand-orange hover:bg-orange-600 text-white"
+          >
+            <CheckCircle className="h-4 w-4 mr-2" />
+            Mark as Reconciled
+          </Button>
+        </div>
       </div>
+      {/* v2.4.0 APPROVAL WORKFLOW CHANGES END */}
 
       {/* Reconciliation Report - Two Column Layout */}
       {reconciliationReport ? (
@@ -273,22 +296,7 @@ export function InvoiceDetailView({ vendorId, invoiceId, onBack }: InvoiceDetail
                 )}
               </div>
 
-              {/* Evidence Viewer Button */}
-              <div className="pt-4 border-t">
-                <h4 className="font-semibold mb-3 text-sm">Supporting Evidence</h4>
-                <Button
-                  onClick={() => {
-                    window.location.href = `/vendors/${vendorId}/invoice/${invoiceId}/evidence`
-                  }}
-                  className="w-full bg-brand-orange hover:bg-orange-600 text-white py-6 text-base font-semibold"
-                >
-                  <Eye className="h-5 w-5 mr-2" />
-                  View Interactive Evidence
-                </Button>
-                <p className="text-sm text-muted-foreground mt-3 text-center">
-                  See highlighted invoice sections with AI explanations
-                </p>
-              </div>
+              {/* v2.4.0: Evidence Viewer button moved to header - removed duplicate */}
             </CardContent>
           </Card>
         </div>
@@ -359,21 +367,12 @@ export function InvoiceDetailView({ vendorId, invoiceId, onBack }: InvoiceDetail
         </CardContent>
       </Card>
 
-      {/* Action Buttons */}
+      {/* v2.4.0: Action buttons moved to header for better visibility */}
+      {/* Download PDF functionality kept here for secondary actions */}
       <div className="flex items-center justify-end gap-3 pt-4 border-t">
         <Button variant="outline" onClick={handleDownload}>
           <Download className="h-4 w-4 mr-2" />
           Download PDF
-        </Button>
-        <Button variant="outline" onClick={handleReject}>
-          Reject
-        </Button>
-        <Button
-          onClick={handleApprove}
-          className="bg-brand-orange hover:bg-orange-600 text-white"
-        >
-          <CheckCircle className="h-4 w-4 mr-2" />
-          Approve Invoice
         </Button>
       </div>
     </div>

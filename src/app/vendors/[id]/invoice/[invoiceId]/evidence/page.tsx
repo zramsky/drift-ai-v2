@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
   ArrowLeft,
@@ -16,12 +16,13 @@ import { mockInvoices, mockVendors } from '@/lib/mock-data'
 import { format } from 'date-fns'
 
 // Mock evidence highlight data
+// v2.4.0 APPROVAL WORKFLOW CHANGES START
 interface EvidenceHighlight {
   id: string
   section: string
   text: string
   explanation: string
-  matchType: 'exact' | 'compliant' | 'discrepancy'
+  matchType: 'exact' | 'compliant' | 'discrepancy' | 'approved' // v2.4.0: Added 'approved' type
   contractReference: string
   position: {
     top: number // percentage
@@ -30,6 +31,7 @@ interface EvidenceHighlight {
     height: number // percentage
   }
 }
+// v2.4.0 APPROVAL WORKFLOW CHANGES END
 
 const mockHighlights: EvidenceHighlight[] = [
   {
@@ -85,19 +87,74 @@ export default function EvidenceViewerPage() {
   const [hoveredHighlight, setHoveredHighlight] = useState<string | null>(null)
   const [selectedHighlight, setSelectedHighlight] = useState<string | null>(null)
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null)
+  // v2.4.0: State to track approved discrepancies
+  const [approvedHighlights, setApprovedHighlights] = useState<Set<string>>(new Set())
+
+  // v2.4.1 UX OPTIMIZATION: Hover delay for better UX
+  const [showTooltip, setShowTooltip] = useState(false)
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const highlightRefs = useRef<Map<string, HTMLElement>>(new Map())
 
   const vendorId = params.id as string
   const invoiceId = params.invoiceId as string
 
-  const handleHighlightHover = (highlightId: string, event: React.MouseEvent) => {
-    setHoveredHighlight(highlightId)
-    setTooltipPosition({ x: event.clientX, y: event.clientY })
-  }
+  // v2.4.0: Function to approve a discrepancy
+  const handleApproveDiscrepancy = useCallback((highlightId: string) => {
+    setApprovedHighlights(prev => new Set(prev).add(highlightId))
+    // Keep tooltip visible after approval
+    setShowTooltip(true)
+  }, [])
 
-  const handleHighlightLeave = () => {
+  // v2.4.0: Get effective match type (considering approvals)
+  const getEffectiveMatchType = useCallback((highlight: EvidenceHighlight): EvidenceHighlight['matchType'] => {
+    if (approvedHighlights.has(highlight.id) && highlight.matchType === 'discrepancy') {
+      return 'approved'
+    }
+    return highlight.matchType
+  }, [approvedHighlights])
+
+  // v2.4.1 UX OPTIMIZATION: Improved hover handling with delay and fixed positioning
+  const handleHighlightHover = useCallback((highlightId: string, element: HTMLElement) => {
+    // Clear any existing timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+    }
+
+    // Set hovered highlight immediately for visual feedback
+    setHoveredHighlight(highlightId)
+
+    // Delay tooltip appearance for better UX (300ms)
+    hoverTimeoutRef.current = setTimeout(() => {
+      setShowTooltip(true)
+
+      // Calculate fixed position based on highlight element
+      const rect = element.getBoundingClientRect()
+      const tooltipX = rect.left + rect.width / 2
+      const tooltipY = rect.bottom + 10 // Position below the highlight
+
+      setTooltipPosition({ x: tooltipX, y: tooltipY })
+    }, 300) // 300ms delay
+  }, [])
+
+  const handleHighlightLeave = useCallback(() => {
+    // Clear the timeout if user moves away before delay
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+    }
+
     setHoveredHighlight(null)
+    setShowTooltip(false)
     setTooltipPosition(null)
-  }
+  }, [])
+
+  // v2.4.1: Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current)
+      }
+    }
+  }, [])
 
   // Find invoice and vendor from mock data
   const invoice = mockInvoices.find(inv => inv.id === invoiceId)
@@ -118,6 +175,7 @@ export default function EvidenceViewerPage() {
     )
   }
 
+  // v2.4.0: Updated to handle 'approved' match type
   const getHighlightColor = (matchType: EvidenceHighlight['matchType']) => {
     switch (matchType) {
       case 'exact':
@@ -126,6 +184,8 @@ export default function EvidenceViewerPage() {
         return 'bg-blue-500/20 border-blue-500 hover:bg-blue-500/30'
       case 'discrepancy':
         return 'bg-error/20 border-error hover:bg-error/30'
+      case 'approved': // v2.4.0: New approved state (green with check)
+        return 'bg-success/30 border-success hover:bg-success/40'
       default:
         return 'bg-gray-500/20 border-gray-500'
     }
@@ -139,12 +199,16 @@ export default function EvidenceViewerPage() {
         return <Info className="h-4 w-4 text-blue-500" />
       case 'discrepancy':
         return <AlertTriangle className="h-4 w-4 text-error" />
+      case 'approved': // v2.4.0: Approved discrepancies show double-check icon
+        return <CheckCircle className="h-4 w-4 text-success" />
       default:
         return <FileText className="h-4 w-4 text-gray-500" />
     }
   }
 
   // Component for rendering highlighted text inline
+  // v2.4.0: Updated to support approved state
+  // v2.4.1 UX OPTIMIZATION: Improved hover behavior and visual feedback
   const HighlightedText = ({
     children,
     highlightId,
@@ -155,14 +219,25 @@ export default function EvidenceViewerPage() {
     matchType: EvidenceHighlight['matchType']
   }) => {
     const getHighlightStyle = () => {
-      const baseClasses = "cursor-pointer transition-all duration-150 rounded px-1 relative"
-      switch (matchType) {
+      const effectiveType = approvedHighlights.has(highlightId) && matchType === 'discrepancy' ? 'approved' : matchType
+      const isHovered = hoveredHighlight === highlightId
+
+      // v2.4.1: Enhanced animations and visual feedback
+      const baseClasses = "cursor-pointer transition-all duration-200 rounded px-1 relative inline-block"
+      const hoverScale = isHovered ? "scale-105" : "scale-100"
+
+      // v2.4.1: Subtle pulse animation for discrepancies
+      const pulseAnimation = effectiveType === 'discrepancy' ? 'animate-pulse-subtle' : ''
+
+      switch (effectiveType) {
         case 'exact':
-          return `${baseClasses} bg-success/20 hover:bg-success/40 border-b-2 border-success`
+          return `${baseClasses} ${hoverScale} bg-success/20 hover:bg-success/40 border-b-2 border-success hover:shadow-sm`
         case 'compliant':
-          return `${baseClasses} bg-blue-500/20 hover:bg-blue-500/40 border-b-2 border-blue-500`
+          return `${baseClasses} ${hoverScale} bg-blue-500/20 hover:bg-blue-500/40 border-b-2 border-blue-500 hover:shadow-sm`
         case 'discrepancy':
-          return `${baseClasses} bg-error/20 hover:bg-error/40 border-b-2 border-error`
+          return `${baseClasses} ${hoverScale} ${pulseAnimation} bg-error/20 hover:bg-error/40 border-b-2 border-error hover:shadow-md`
+        case 'approved':
+          return `${baseClasses} ${hoverScale} bg-success/30 hover:bg-success/50 border-b-2 border-success hover:shadow-sm`
         default:
           return baseClasses
       }
@@ -170,10 +245,12 @@ export default function EvidenceViewerPage() {
 
     return (
       <span
+        ref={(el) => {
+          if (el) highlightRefs.current.set(highlightId, el)
+        }}
         className={getHighlightStyle()}
-        onMouseEnter={(e) => handleHighlightHover(highlightId, e)}
+        onMouseEnter={(e) => handleHighlightHover(highlightId, e.currentTarget as HTMLElement)}
         onMouseLeave={handleHighlightLeave}
-        onMouseMove={(e) => setTooltipPosition({ x: e.clientX, y: e.clientY })}
         onClick={() => setSelectedHighlight(selectedHighlight === highlightId ? null : highlightId)}
       >
         {children}
@@ -337,34 +414,69 @@ export default function EvidenceViewerPage() {
                   </div>
 
                   {/* Tooltip for Hovered Highlight */}
-                  {hoveredHighlight && tooltipPosition && (
+                  {/* v2.4.0: Added Approve button for discrepancy highlights */}
+                  {/* v2.4.1 UX OPTIMIZATION: Fixed positioning with smooth transitions */}
+                  {hoveredHighlight && showTooltip && tooltipPosition && (
                     <div
-                      className="fixed z-50 max-w-sm p-4 bg-white border-2 border-gray-300 rounded-lg shadow-xl pointer-events-none"
+                      className="fixed z-50 max-w-sm p-4 bg-white border-2 border-gray-300 rounded-lg shadow-xl transition-opacity duration-200 ease-in-out"
                       style={{
-                        left: `${tooltipPosition.x + 15}px`,
-                        top: `${tooltipPosition.y + 15}px`,
-                        transform: tooltipPosition.x > window.innerWidth / 2 ? 'translateX(-100%)' : 'none'
+                        left: `${tooltipPosition.x}px`,
+                        top: `${tooltipPosition.y}px`,
+                        transform: 'translateX(-50%)', // Center horizontally
+                        pointerEvents: 'auto', // v2.4.0: Enable interactions for approve button
+                        opacity: 1,
+                        animation: 'fadeIn 200ms ease-in-out'
                       }}
+                      onMouseEnter={() => {
+                        // Keep tooltip visible when hovering over it
+                        if (hoverTimeoutRef.current) {
+                          clearTimeout(hoverTimeoutRef.current)
+                        }
+                      }}
+                      onMouseLeave={handleHighlightLeave}
                     >
                       {(() => {
                         const highlight = mockHighlights.find(h => h.id === hoveredHighlight)
                         if (!highlight) return null
 
+                        const effectiveMatchType = getEffectiveMatchType(highlight)
+                        const isDiscrepancy = highlight.matchType === 'discrepancy' && !approvedHighlights.has(highlight.id)
+
                         return (
                           <div>
                             <div className="flex items-start gap-2 mb-2">
-                              {getHighlightIcon(highlight.matchType)}
+                              {getHighlightIcon(effectiveMatchType)}
                               <div className="flex-1">
                                 <h4 className="font-semibold text-sm text-gray-900">{highlight.section}</h4>
                                 <p className="text-xs text-gray-600 mt-0.5">"{highlight.text}"</p>
+                                {approvedHighlights.has(highlight.id) && (
+                                  <Badge variant="success" className="mt-1 text-xs">
+                                    ✓ Approved
+                                  </Badge>
+                                )}
                               </div>
                             </div>
                             <p className="text-sm text-gray-700 leading-relaxed mb-2">
                               {highlight.explanation}
                             </p>
-                            <p className="text-xs text-gray-500 italic">
+                            <p className="text-xs text-gray-500 italic mb-3">
                               {highlight.contractReference}
                             </p>
+                            {/* v2.4.0: Show Approve button for discrepancies */}
+                            {/* v2.4.1: Enhanced button with better interaction */}
+                            {isDiscrepancy && (
+                              <Button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleApproveDiscrepancy(highlight.id)
+                                }}
+                                size="sm"
+                                className="w-full bg-brand-orange hover:bg-orange-600 text-white transition-all duration-200 hover:scale-105"
+                              >
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Approve This Item
+                              </Button>
+                            )}
                           </div>
                         )
                       })()}
@@ -376,6 +488,7 @@ export default function EvidenceViewerPage() {
           </div>
 
           {/* Highlights Legend (Right - 1 column) */}
+          {/* v2.4.0: Updated to show approved state */}
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
               <CardHeader>
@@ -385,39 +498,52 @@ export default function EvidenceViewerPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                {mockHighlights.map((highlight) => (
-                  <div
-                    key={highlight.id}
-                    className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
-                      selectedHighlight === highlight.id
-                        ? 'border-brand-orange bg-brand-orange/5'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                    onClick={() => setSelectedHighlight(selectedHighlight === highlight.id ? null : highlight.id)}
-                    onMouseEnter={() => setHoveredHighlight(highlight.id)}
-                    onMouseLeave={() => setHoveredHighlight(null)}
-                  >
-                    <div className="flex items-start gap-2">
-                      {getHighlightIcon(highlight.matchType)}
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-sm text-gray-900">{highlight.section}</h4>
-                        <p className="text-xs text-gray-600 mt-0.5">"{highlight.text}"</p>
-                        {selectedHighlight === highlight.id && (
-                          <div className="mt-2 pt-2 border-t border-gray-200">
-                            <p className="text-xs text-gray-700 leading-relaxed mb-1">
-                              {highlight.explanation}
-                            </p>
-                            <p className="text-xs text-gray-500 italic">
-                              {highlight.contractReference}
-                            </p>
-                          </div>
-                        )}
+                {mockHighlights.map((highlight) => {
+                  const effectiveMatchType = getEffectiveMatchType(highlight)
+                  const isApproved = approvedHighlights.has(highlight.id)
+
+                  return (
+                    <div
+                      key={highlight.id}
+                      className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                        selectedHighlight === highlight.id
+                          ? 'border-brand-orange bg-brand-orange/5'
+                          : isApproved
+                          ? 'border-success/30 bg-success/5'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => setSelectedHighlight(selectedHighlight === highlight.id ? null : highlight.id)}
+                      onMouseEnter={() => setHoveredHighlight(highlight.id)}
+                      onMouseLeave={() => setHoveredHighlight(null)}
+                    >
+                      <div className="flex items-start gap-2">
+                        {getHighlightIcon(effectiveMatchType)}
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-sm text-gray-900">{highlight.section}</h4>
+                          <p className="text-xs text-gray-600 mt-0.5">"{highlight.text}"</p>
+                          {isApproved && (
+                            <Badge variant="success" className="mt-1 text-xs">
+                              Approved
+                            </Badge>
+                          )}
+                          {selectedHighlight === highlight.id && (
+                            <div className="mt-2 pt-2 border-t border-gray-200">
+                              <p className="text-xs text-gray-700 leading-relaxed mb-1">
+                                {highlight.explanation}
+                              </p>
+                              <p className="text-xs text-gray-500 italic">
+                                {highlight.contractReference}
+                              </p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
 
                 {/* Legend Key */}
+                {/* v2.4.0: Added Approved status to legend */}
                 <div className="pt-4 border-t space-y-2">
                   <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Legend</p>
                   <div className="flex items-center gap-2">
@@ -431,6 +557,10 @@ export default function EvidenceViewerPage() {
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 text-error" />
                     <span className="text-xs text-gray-600">Discrepancy</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-success" />
+                    <span className="text-xs text-gray-600">Approved</span>
                   </div>
                 </div>
               </CardContent>

@@ -266,6 +266,31 @@
       transform: translateX(100%);
     }
   }
+
+  /* v2.4.1 UX OPTIMIZATION: Tooltip and highlight animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.95;
+    }
+  }
+
+  .animate-pulse-subtle {
+    animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
   
   /* Mobile-first responsive utilities */
   @media (max-width: 640px) {
