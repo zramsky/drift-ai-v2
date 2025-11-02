@@ -7,7 +7,7 @@
 ## 📍 Project Overview
 
 **Project Name**: DRIFT.AI V2 Contract Reconciliation Platform
-**Current Version**: 2.4.1
+**Current Version**: 2.4.1.2
 **Last Updated**: November 2, 2025
 **Status**: Production-ready, actively deployed
 
@@ -55,9 +55,34 @@
 
 ---
 
-## 📋 What We Just Completed (v2.4.1)
+## 📋 What We Just Completed (v2.4.1.2)
 
-### Evidence Viewer UX Optimization ✅
+### Legend Section Enhancements (v2.4.1.2) ✅
+- **Purpose**: Improve legend section with scroll-to and inline approval functionality
+- **Scroll-to Functionality**:
+  - Clicking legend items scrolls to corresponding highlight in invoice
+  - Smooth scroll animation with center alignment
+  - Orange ring flash (1.5s) to draw visual attention
+  - Uses highlightRefs Map for efficient element location
+- **Inline Approval**:
+  - "Approve This Item" button in legend for discrepancies
+  - Button appears inline when legend item expanded (no popups)
+  - Brand orange styling matching tooltip button
+  - Instant feedback: badge + color change (red → green)
+- **Enhanced Interactions**:
+  - Removed hover effects to prevent tooltip conflicts
+  - Clean inline expansion within legend card
+  - Orange border indicates selected item
+  - Event propagation prevented to maintain expansion
+- **Impact**: Faster workflow, no manual scrolling, no popup confusion, professional UX
+
+### Tooltip Grace Period (v2.4.1.1) ✅
+- **Purpose**: Fix tooltip disappearing when moving mouse to approve button
+- **Solution**: 200ms grace period before closing tooltip
+- **Implementation**: Added leaveTimeoutRef with proper cleanup
+- **Impact**: Users can reliably click approve button without tooltip disappearing
+
+### Evidence Viewer UX Optimization (v2.4.1) ✅
 - **Purpose**: Comprehensive performance and user experience improvements to the evidence viewer
 - **Major Fixes**:
   - Fixed tooltip positioning (eliminated frustrating cursor-following behavior)
@@ -176,7 +201,30 @@
 
 ## 🔄 Recent Version History
 
-### v2.4.1 (Current - Nov 2, 2025) ⭐
+### v2.4.1.2 (Current - Nov 2, 2025) ⭐
+- **Legend Section Enhancements** - Scroll-to and inline approval
+- Added scroll-to functionality when clicking legend items
+- Smooth scroll animation with center alignment and orange ring flash
+- Added "Approve This Item" button inline in legend section
+- No popups - all interactions inline within legend card
+- Removed hover effects to prevent tooltip conflicts
+- Enhanced click behavior to combine selection + scroll
+- Visual feedback with orange border for selected items
+- **Files Modified**: evidence/page.tsx (+44 lines, -6 lines)
+- **Testing**: All features verified working, no TypeScript errors
+- **Deployed to production**: ✅
+
+### v2.4.1.1 (Nov 2, 2025)
+- **Tooltip Grace Period** - Fix for approve button interaction
+- Added 200ms grace period before closing tooltip
+- Allows smooth mouse movement from highlight to tooltip
+- Fixed issue where tooltip disappeared before clicking approve
+- Added leaveTimeoutRef with proper cleanup
+- **Files Modified**: evidence/page.tsx (+24 lines, -6 lines)
+- **Testing**: Grace period timing perfect, zero errors
+- **Deployed to production**: ✅
+
+### v2.4.1 (Nov 2, 2025)
 - **Evidence Viewer UX Optimization** - Major performance and UX improvements
 - Fixed tooltip positioning (no more cursor following)
 - Added 300ms hover delay to prevent accidental tooltips
@@ -561,18 +609,20 @@ Before deploying any changes:
 
 You now have everything you need to continue working on DRIFT.AI V2!
 
-**Current version**: 2.4.1
-**Last session**: Evidence Viewer UX Optimization + Approval Workflow Implementation
-**Production**: ✅ Deployed and live at https://driftai-v2-gfp1d7z5d-zramskys-projects.vercel.app
+**Current version**: 2.4.1.2
+**Last session**: Legend Section Enhancements + Tooltip Grace Period + Evidence Viewer UX
+**Production**: ✅ Deployed and live at https://driftai-v2-eginrmdui-zramskys-projects.vercel.app
 **Next**: Choose a task from "Next Possible Tasks" above
 
 **Major Achievements This Session**:
 - ✅ Implemented approval workflow for discrepancies (v2.4.0)
 - ✅ Optimized evidence viewer UX with 99% performance improvement (v2.4.1)
+- ✅ Added tooltip grace period for reliable approve button clicks (v2.4.1.1)
+- ✅ Enhanced legend with scroll-to and inline approval (v2.4.1.2)
 - ✅ Fixed tooltip positioning frustration (cursor-following → fixed)
 - ✅ Added 300ms hover delay for better UX
-- ✅ Created comprehensive documentation (1,068 lines total)
-- ✅ Deployed to production successfully
+- ✅ Created comprehensive documentation (1,068+ lines total)
+- ✅ Deployed to production successfully (3 deployments)
 
 **Copy the "Common Commands" section** and you're ready to code! 🚀
 

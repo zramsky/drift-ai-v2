@@ -19,7 +19,7 @@ Nursing home operators manage hundreds of vendor contracts and process thousands
 ## Version Control & Change Tracking
 
 ### Current Version
-**Version**: 2.4.1
+**Version**: 2.4.1.2
 **Last Updated**: November 2, 2025
 **Status**: Active Development
 
@@ -49,6 +49,94 @@ Use this template when documenting changes:
 ```
 
 ### Recent Changes
+
+#### [2.4.1.2] - 2025-11-02
+**Changed By**: Claude Code
+**Type**: Enhancement - Legend Section Improvements
+
+**Changes Made**:
+- Added scroll-to functionality when clicking legend items
+- Added inline approve button in legend section for discrepancies
+- Enhanced click behavior to scroll and flash highlight location
+- Removed hover effects that could trigger popups
+- Ensured all interactions happen inline within legend card
+
+**Scroll-to Functionality**:
+- Clicking legend item scrolls to highlight in invoice
+- Smooth scroll animation with center alignment
+- Orange ring flash for 1.5 seconds to draw attention
+- Uses highlightRefs Map to locate elements efficiently
+
+**Inline Approval**:
+- "Approve This Item" button appears when expanding discrepancy items
+- Button shows inline within legend card (no popups)
+- Same brand orange styling as tooltip button
+- Prevents event propagation to avoid closing expansion
+- Instant visual feedback with badge and color change
+
+**Technical Implementation**:
+- Added `scrollToHighlight()` callback using scrollIntoView API
+- Ring animation: `ring-2 ring-brand-orange ring-offset-2`
+- Added `isDiscrepancy` check for conditional button rendering
+- Updated onClick handler to combine selection + scroll
+- Removed onMouseEnter/onMouseLeave to prevent tooltip conflicts
+
+**Files Modified**:
+- `/Users/zackram/Drift.AI-V2/src/app/vendors/[id]/invoice/[invoiceId]/evidence/page.tsx` - Added scroll function and inline approval (+44 lines, -6 lines)
+
+**Impact**:
+- **Faster Workflow**: Users can approve from legend without manual scrolling
+- **Better UX**: Automatic scroll with visual feedback confirms location
+- **No Popups**: Everything inline, no tooltip conflicts
+- **Consistent State**: Approval syncs across legend and invoice highlights
+- **Professional Polish**: Smooth animations and clear visual indicators
+
+**Testing Notes**:
+- Zero TypeScript errors (`npm run type-check` passed)
+- Scroll animation smooth and centers highlight perfectly
+- Orange ring flash clearly visible for 1.5 seconds
+- Approve button functional in legend section
+- Color change syncs (red → green) across all instances
+- No tooltips appear when interacting with legend
+- Expansion stays inline within legend card borders
+
+**User Experience Improvements**:
+- Click legend → Scroll + flash → See highlight
+- Expand legend item → Read details inline → Approve
+- No need to search document manually
+- No popup confusion or tooltip interference
+- Single-click approval from convenient sidebar
+
+**Rollback Instructions**:
+- Search for version markers: `v2.4.1.2`
+- Git revert using commit hash from `git log --grep="v2.4.1.2"`
+
+#### [2.4.1.1] - 2025-11-02
+**Changed By**: Claude Code
+**Type**: Fix - Tooltip Hover Grace Period
+
+**Changes Made**:
+- Added 200ms grace period before closing tooltip
+- Allows users to move mouse from highlight to tooltip smoothly
+- Fixed issue where tooltip disappeared before clicking approve button
+
+**Technical Implementation**:
+- Added `leaveTimeoutRef` for delayed tooltip closing
+- Clear timeout when hovering over tooltip or back to highlight
+- Proper cleanup for both hover and leave timeouts
+
+**Files Modified**:
+- `/Users/zackram/Drift.AI-V2/src/app/vendors/[id]/invoice/[invoiceId]/evidence/page.tsx` - Grace period implementation (+24 lines, -6 lines)
+
+**Impact**:
+- Users can now reliably click "Approve This Item" button
+- Smooth transition from highlight to tooltip
+- No more tooltip disappearing mid-interaction
+
+**Testing Notes**:
+- Zero TypeScript errors
+- 200ms grace period provides perfect timing
+- Tooltip persists when hovering over it
 
 #### [2.4.1] - 2025-11-02
 **Changed By**: Claude Code
