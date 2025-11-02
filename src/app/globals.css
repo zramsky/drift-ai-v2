@@ -1042,4 +1042,70 @@
       background: #6b7280;
     }
   }
+
+  /* ========================================
+     DASHBOARD REDESIGN GRID UTILITIES
+     ======================================== */
+
+  /* 4-column responsive grid for KPI cards */
+  .dashboard-grid-kpi {
+    display: grid;
+    gap: 1.5rem; /* 24px mobile */
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  @media (min-width: 640px) {
+    .dashboard-grid-kpi {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem; /* 24px tablet */
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .dashboard-grid-kpi {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 2rem; /* 32px desktop */
+    }
+  }
+
+  /* Full-width section for action required and variance table */
+  .dashboard-section-full {
+    display: grid;
+    gap: 2rem; /* 32px spacing between sections */
+    grid-template-columns: 1fr;
+  }
+
+  /* Main dashboard container */
+  .dashboard-main-container {
+    max-width: 87.5rem; /* 1400px */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .dashboard-main-container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .dashboard-main-container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  /* Section spacing utilities */
+  .dashboard-section-gap {
+    margin-bottom: 2rem; /* 32px */
+  }
+
+  @media (min-width: 1024px) {
+    .dashboard-section-gap {
+      margin-bottom: 2rem; /* 32px desktop */
+    }
+  }
 }
