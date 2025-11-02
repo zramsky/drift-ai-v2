@@ -105,10 +105,6 @@ export function InvoiceDetailView({ vendorId, invoiceId, onBack }: InvoiceDetail
     alert('Download PDF functionality coming soon!')
   }
 
-  const handleViewEvidence = () => {
-    alert('Evidence viewer coming soon!')
-  }
-
   return (
     <div className="space-y-6">
       {/* Back Button / Breadcrumb */}
@@ -147,114 +143,124 @@ export function InvoiceDetailView({ vendorId, invoiceId, onBack }: InvoiceDetail
         </Badge>
       </div>
 
-      {/* Reconciliation Report */}
+      {/* Reconciliation Report - Two Column Layout */}
       {reconciliationReport ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Reconciliation Report</CardTitle>
-            <CardDescription>
-              AI analysis and contract compliance results
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Status Summary */}
-            <div className={`p-4 rounded-lg border-2 ${
-              reconciliationReport.hasDiscrepancies
-                ? 'bg-warning/10 border-warning/20'
-                : 'bg-success/10 border-success/20'
-            }`}>
-              <div className="flex items-center gap-3">
-                {reconciliationReport.hasDiscrepancies ? (
-                  <AlertTriangle className="h-6 w-6 text-warning" />
-                ) : (
-                  <CheckCircle className="h-6 w-6 text-success" />
-                )}
-                <div>
-                  <h3 className="font-semibold">
-                    {reconciliationReport.hasDiscrepancies ? 'Issues Found' : 'All Clear'}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {reconciliationReport.hasDiscrepancies
-                      ? `${reconciliationReport.discrepancies.length} discrepancy(ies) identified`
-                      : 'Invoice matches contract terms'
-                    }
-                  </p>
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+          {/* Left Column: Reconciliation Details */}
+          <Card className="flex flex-col h-full">
+            <CardHeader>
+              <CardTitle>Reconciliation Report</CardTitle>
+              <CardDescription>
+                Contract compliance and discrepancy details
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6 flex-grow">
+              {/* Status Summary */}
+              <div className={`p-4 rounded-lg border-2 ${
+                reconciliationReport.hasDiscrepancies
+                  ? 'bg-warning/10 border-warning/20'
+                  : 'bg-success/10 border-success/20'
+              }`}>
+                <div className="flex items-center gap-3">
+                  {reconciliationReport.hasDiscrepancies ? (
+                    <AlertTriangle className="h-6 w-6 text-warning" />
+                  ) : (
+                    <CheckCircle className="h-6 w-6 text-success" />
+                  )}
+                  <div>
+                    <h3 className="font-semibold">
+                      {reconciliationReport.hasDiscrepancies ? 'Issues Found' : 'All Clear'}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {reconciliationReport.hasDiscrepancies
+                        ? `${reconciliationReport.discrepancies.length} discrepancy(ies) identified`
+                        : 'Invoice matches contract terms'
+                      }
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Discrepancies */}
-            {reconciliationReport.hasDiscrepancies && (
-              <div>
-                <h4 className="font-semibold mb-4">Discrepancies Found</h4>
-                <div className="space-y-4">
-                  {reconciliationReport.discrepancies.map((discrepancy, index) => (
-                    <div key={index} className="p-4 border border-border rounded-lg bg-warning/5">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h5 className="font-medium">{discrepancy.description}</h5>
-                          <Badge
-                            className="mt-2"
-                            variant={
-                              discrepancy.priority === 'high' ? 'error' :
-                              discrepancy.priority === 'medium' ? 'warning' :
-                              'secondary'
-                            }
-                          >
-                            {discrepancy.priority} priority
-                          </Badge>
+              {/* Discrepancies */}
+              {reconciliationReport.hasDiscrepancies && (
+                <div>
+                  <h4 className="font-semibold mb-4">Discrepancies Found</h4>
+                  <div className="space-y-4">
+                    {reconciliationReport.discrepancies.map((discrepancy, index) => (
+                      <div key={index} className="p-4 border border-border rounded-lg bg-warning/5">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h5 className="font-medium">{discrepancy.description}</h5>
+                            <Badge
+                              className="mt-2"
+                              variant={
+                                discrepancy.priority === 'high' ? 'error' :
+                                discrepancy.priority === 'medium' ? 'warning' :
+                                'secondary'
+                              }
+                            >
+                              {discrepancy.priority} priority
+                            </Badge>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-semibold text-error">
+                              ${discrepancy.amount.toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                              })}
+                            </p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-semibold text-error">
-                            ${discrepancy.amount.toLocaleString('en-US', {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2
-                            })}
-                          </p>
+                        <div className="grid grid-cols-2 gap-4 mt-3 text-sm">
+                          <div>
+                            <label className="text-muted-foreground">Expected</label>
+                            <p className="font-medium">{discrepancy.expectedValue}</p>
+                          </div>
+                          <div>
+                            <label className="text-muted-foreground">Actual</label>
+                            <p className="font-medium">{discrepancy.actualValue}</p>
+                          </div>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 mt-3 text-sm">
-                        <div>
-                          <label className="text-muted-foreground">Expected</label>
-                          <p className="font-medium">{discrepancy.expectedValue}</p>
-                        </div>
-                        <div>
-                          <label className="text-muted-foreground">Actual</label>
-                          <p className="font-medium">{discrepancy.actualValue}</p>
-                        </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Checklist */}
+              <div>
+                <h4 className="font-semibold mb-4">Compliance Checklist</h4>
+                <div className="space-y-3">
+                  {reconciliationReport.checklist.map((item, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      {item.passed ? (
+                        <CheckCircle className="h-5 w-5 text-success mt-0.5" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-error mt-0.5" />
+                      )}
+                      <div className="flex-1">
+                        <p className="font-medium">{item.item}</p>
+                        <p className="text-sm text-muted-foreground">{item.details}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Confidence: {Math.round(item.confidence * 100)}%
+                        </p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-            )}
+            </CardContent>
+          </Card>
 
-            {/* Checklist */}
-            <div>
-              <h4 className="font-semibold mb-4">Compliance Checklist</h4>
-              <div className="space-y-3">
-                {reconciliationReport.checklist.map((item, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    {item.passed ? (
-                      <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    ) : (
-                      <XCircle className="h-5 w-5 text-error mt-0.5" />
-                    )}
-                    <div className="flex-1">
-                      <p className="font-medium">{item.item}</p>
-                      <p className="text-sm text-muted-foreground">{item.details}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Confidence: {Math.round(item.confidence * 100)}%
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* AI Rationale */}
-            <div>
-              <h4 className="font-semibold mb-2">AI Analysis</h4>
+          {/* Right Column: AI Analysis */}
+          <Card className="flex flex-col h-full">
+            <CardHeader>
+              <CardTitle>AI Analysis</CardTitle>
+              <CardDescription>
+                GPT-4 Vision rationale and processing details
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex-grow space-y-4">
               <div className="bg-surface-secondary p-4 rounded-lg">
                 <p className="text-sm text-muted-foreground italic">
                   "{reconciliationReport.rationaleText}"
@@ -266,9 +272,27 @@ export function InvoiceDetailView({ vendorId, invoiceId, onBack }: InvoiceDetail
                   </div>
                 )}
               </div>
-            </div>
-          </CardContent>
-        </Card>
+
+              {/* Evidence Viewer Button */}
+              <div className="pt-4 border-t">
+                <h4 className="font-semibold mb-3 text-sm">Supporting Evidence</h4>
+                <Button
+                  onClick={() => {
+                    window.location.href = `/vendors/${vendorId}/invoice/${invoiceId}/evidence`
+                  }}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Interactive Evidence
+                </Button>
+                <p className="text-xs text-muted-foreground mt-2 text-center">
+                  See highlighted invoice sections with AI explanations
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       ) : (
         <Card>
           <CardHeader>
@@ -332,28 +356,6 @@ export function InvoiceDetailView({ vendorId, invoiceId, onBack }: InvoiceDetail
                 ))}
               </TableBody>
             </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Evidence Viewer Section (Placeholder) */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Evidence Viewer</CardTitle>
-          <CardDescription>
-            View supporting evidence and contract excerpts
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8">
-            <Eye className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-            <p className="text-muted-foreground mb-4">
-              Evidence viewer functionality will be integrated here
-            </p>
-            <Button onClick={handleViewEvidence} variant="outline">
-              <Eye className="h-4 w-4 mr-2" />
-              View Full Evidence
-            </Button>
           </div>
         </CardContent>
       </Card>

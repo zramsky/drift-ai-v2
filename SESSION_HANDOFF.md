@@ -7,7 +7,7 @@
 ## 📍 Project Overview
 
 **Project Name**: DRIFT.AI V2 Contract Reconciliation Platform
-**Current Version**: 2.2.0
+**Current Version**: 2.3.1
 **Last Updated**: November 2, 2025
 **Status**: Production-ready, actively deployed
 
@@ -159,7 +159,38 @@
 
 ## 🔄 Recent Version History
 
-### v2.2.0 (Current - Nov 2, 2025) ⭐
+### v2.3.1 (Current - Nov 2, 2025) ⭐
+- **Inline Highlights Enhancement** - Major UX improvement
+- Refactored highlights from absolute positioned overlays to inline text highlights
+- Implemented dynamic hover tooltips that follow mouse cursor
+- Added color-coded underlines (green/blue/red borders)
+- Enhanced hover effects with smooth transitions
+- Smart tooltip positioning (left/right based on screen position)
+- More intuitive and professional appearance
+- **Result**: Highlights now feel natural and integrated with the text
+
+### v2.3.0 (Nov 2, 2025)
+- **Interactive Evidence Viewer** - Major new feature
+- Created dedicated evidence viewer page with highlighted invoice sections
+- Moved Evidence Viewer button into AI Analysis card
+- Implemented hover tooltips with AI reconciliation explanations
+- Added clickable highlights with detailed contract references
+- Built 3-tier color system: Green (exact match), Blue (compliant), Red (discrepancy)
+- Side-by-side layout: invoice preview + highlights legend sidebar
+- 5 example highlights: payment terms, unit pricing, quantities, tax rates, dates
+- **Route**: `/vendors/[id]/invoice/[invoiceId]/evidence`
+- **Testing**: Zero TypeScript errors, smooth interactions, mobile responsive
+
+### v2.2.1 (Nov 2, 2025)
+- Split Reconciliation Report into two side-by-side cards
+- Left card: Reconciliation Report (Status, Discrepancies, Checklist)
+- Right card: AI Analysis (GPT-4 rationale and metadata)
+- Implemented equal-height two-column grid layout (desktop 1024px+)
+- Enhanced visual separation between compliance data and AI reasoning
+- Mobile responsive: Stacks vertically on smaller screens
+- **Testing**: Zero TypeScript errors, compiles successfully
+
+### v2.2.0 (Nov 2, 2025)
 - Simplified invoice detail view by removing redundant cards
 - Removed Invoice Details card (info already in header)
 - Removed Vendor Context card (accessible via back button)
