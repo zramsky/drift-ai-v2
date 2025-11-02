@@ -93,6 +93,7 @@ export default function EvidenceViewerPage() {
   // v2.4.1 UX OPTIMIZATION: Hover delay for better UX
   const [showTooltip, setShowTooltip] = useState(false)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null) // v2.4.1.1: Delay closing tooltip
   const highlightRefs = useRef<Map<string, HTMLElement>>(new Map())
 
   const vendorId = params.id as string
@@ -120,6 +121,11 @@ export default function EvidenceViewerPage() {
       clearTimeout(hoverTimeoutRef.current)
     }
 
+    // v2.4.1.1: Also clear leave timeout if hovering back
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current)
+    }
+
     // Set hovered highlight immediately for visual feedback
     setHoveredHighlight(highlightId)
 
@@ -137,21 +143,29 @@ export default function EvidenceViewerPage() {
   }, [])
 
   const handleHighlightLeave = useCallback(() => {
-    // Clear the timeout if user moves away before delay
+    // Clear the hover timeout if user moves away before delay
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current)
     }
 
-    setHoveredHighlight(null)
-    setShowTooltip(false)
-    setTooltipPosition(null)
+    // v2.4.1.1: Add delay before closing tooltip to allow user to move mouse to it
+    // This creates a "grace period" for moving from highlight to tooltip
+    leaveTimeoutRef.current = setTimeout(() => {
+      setHoveredHighlight(null)
+      setShowTooltip(false)
+      setTooltipPosition(null)
+    }, 200) // 200ms grace period
   }, [])
 
-  // v2.4.1: Cleanup timeout on unmount
+  // v2.4.1: Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current)
+      }
+      // v2.4.1.1: Also cleanup leave timeout
+      if (leaveTimeoutRef.current) {
+        clearTimeout(leaveTimeoutRef.current)
       }
     }
   }, [])
@@ -428,9 +442,13 @@ export default function EvidenceViewerPage() {
                         animation: 'fadeIn 200ms ease-in-out'
                       }}
                       onMouseEnter={() => {
-                        // Keep tooltip visible when hovering over it
+                        // v2.4.1.1: Keep tooltip visible when hovering over it
                         if (hoverTimeoutRef.current) {
                           clearTimeout(hoverTimeoutRef.current)
+                        }
+                        // Clear the leave timeout to prevent tooltip from closing
+                        if (leaveTimeoutRef.current) {
+                          clearTimeout(leaveTimeoutRef.current)
                         }
                       }}
                       onMouseLeave={handleHighlightLeave}
