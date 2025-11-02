@@ -19,7 +19,7 @@ Nursing home operators manage hundreds of vendor contracts and process thousands
 ## Version Control & Change Tracking
 
 ### Current Version
-**Version**: 2.0.0
+**Version**: 2.0.3
 **Last Updated**: November 1, 2025
 **Status**: Active Development
 
@@ -49,6 +49,55 @@ Use this template when documenting changes:
 ```
 
 ### Recent Changes
+
+#### [2.0.3] - 2025-11-01
+**Changed By**: Claude Code + Frontend Architect Agent
+**Type**: Feature - Vendor Detail Page Enhancements
+
+**Changes Made**:
+- Implemented equal-height two-column layout for Vendor and Contract Information cards
+- Converted Recent Activity from card list to professional table format
+- Added interactive table with 4 columns (Invoice Date, Number, Amount, Status)
+- Implemented clickable rows with keyboard navigation support
+- Added "View All" button that switches to Invoices tab (shows when > 6 invoices)
+- Fixed critical Tailwind config issue preventing grid classes from working
+- Enhanced accessibility with full keyboard support (Tab, Enter, Space)
+
+**Files Created**:
+- None (used existing components)
+
+**Files Modified**:
+- `/Users/zackram/Drift.AI-V2/src/app/vendors/[id]/page.tsx` - Enhanced layout and table implementation
+- `/Users/zackram/Drift.AI-V2/tailwind.config.ts` - Fixed gridTemplateColumns configuration
+
+**Impact**:
+- Professional two-column layout with equal card heights on desktop (1024px+)
+- Improved data scanning with tabular invoice display (6 invoices vs 5 card items)
+- Better mobile experience with horizontal table scroll
+- Enhanced accessibility (WCAG 2.1 AA compliant with keyboard navigation)
+- Fixed broken grid utilities affecting entire application
+- Consistent spacing and visual balance throughout vendor detail page
+
+**Testing Notes**:
+- Tested on desktop (1440px), tablet (768px), and mobile (375px)
+- Verified two-column layout at desktop breakpoint
+- Confirmed table displays 4 columns with proper formatting
+- Tested row click navigation to invoice detail
+- Verified "View All" button functionality
+- Tested keyboard navigation (Tab, Enter, Space keys)
+- Confirmed horizontal scroll on mobile devices
+- Zero TypeScript errors
+- Zero console errors
+- All responsive breakpoints working correctly
+
+**Technical Details**:
+- Used flexbox (`flex flex-col h-full`) for equal-height cards
+- Used CSS Grid `items-stretch` for vertical alignment
+- Implemented shadcn/ui Table components
+- Status badge mapping: reconciled → "Clean", flagged → "Flagged", etc.
+- Financial formatting: `toLocaleString()` with 2 decimal places
+- Keyboard events: Enter and Space key handlers on table rows
+- Tailwind fix: Moved gridTemplateColumns to `theme.extend` block
 
 #### [2.0.2] - 2025-11-01
 **Changed By**: Claude Code + Frontend Architect Agent

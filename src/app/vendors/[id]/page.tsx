@@ -6,9 +6,10 @@ import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, Building2, MapPin, Phone, Mail, Globe, Calendar, DollarSign, FileText, Edit, Upload, Clock, CheckCircle, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { KPICard } from '@/components/ui/kpi-card'
+import { DashboardKPICard } from '@/components/dashboard/dashboard-kpi-card'
 import { apiClient } from '@/lib/api'
 import { mockInvoices, mockContracts, mockReconciliationReports } from '@/lib/mock-data'
 import { EditVendorDialog } from '@/components/vendors/edit-vendor-dialog'
@@ -155,40 +156,44 @@ export default function VendorDetailPage({ params }: VendorDetailPageProps) {
             {/* Summary Tab */}
             <TabsContent value="summary" className="space-y-6">
               {/* KPI Cards */}
-              <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-                <KPICard
-                  title="TOTAL INVOICES"
+              <div className="dashboard-grid-kpi">
+                <DashboardKPICard
+                  title="Total Invoices"
                   value={vendor.totalInvoices}
+                  description="Total processed"
                   icon={Building2}
-                  variant="info"
+                  aria-label="Total number of invoices processed for this vendor"
                 />
-                
-                <KPICard
-                  title="TOTAL SAVINGS"
+
+                <DashboardKPICard
+                  title="Total Savings"
                   value={`$${vendor.totalSavings.toLocaleString()}`}
+                  description="Cost reductions"
                   icon={DollarSign}
-                  variant="success"
+                  aria-label="Total savings found for this vendor"
                 />
-                
-                <KPICard
-                  title="DISCREPANCIES"
+
+                <DashboardKPICard
+                  title="Discrepancies"
                   value={vendor.totalDiscrepancies}
+                  description="Items flagged"
                   icon={AlertCircle}
-                  variant={vendor.totalDiscrepancies > 0 ? "warning" : "success"}
+                  aria-label="Number of invoice discrepancies detected"
                 />
-                
-                <KPICard
-                  title="SUCCESS RATE"
+
+                <DashboardKPICard
+                  title="Success Rate"
                   value={`${vendor.totalInvoices > 0 ? Math.round(((vendor.totalInvoices - vendor.totalDiscrepancies) / vendor.totalInvoices) * 100) : 0}%`}
+                  description="Clean invoices"
                   icon={CheckCircle}
-                  variant="success"
+                  aria-label="Percentage of invoices processed without issues"
                 />
               </div>
 
-              <div className="grid gap-6 lg:grid-cols-2">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-stretch">
                 {/* Vendor Information */}
-                <Card>
-                  <CardHeader>
+                <Card className="flex flex-col h-full">
+                  <CardHeader className="flex-shrink-0">
                     <div className="flex items-center justify-between">
                       <div>
                         <CardTitle className="flex items-center gap-2">
@@ -205,7 +210,7 @@ export default function VendorDetailPage({ params }: VendorDetailPageProps) {
                       </Button>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="flex-grow space-y-4">
                     <div className="grid gap-4">
                       <div>
                         <label className="text-sm font-medium text-muted-foreground">
@@ -269,8 +274,8 @@ export default function VendorDetailPage({ params }: VendorDetailPageProps) {
                 </Card>
 
                 {/* Contract Information */}
-                <Card>
-                  <CardHeader>
+                <Card className="flex flex-col h-full">
+                  <CardHeader className="flex-shrink-0">
                     <div className="flex items-center justify-between">
                       <div>
                         <CardTitle className="flex items-center gap-2">
@@ -292,7 +297,7 @@ export default function VendorDetailPage({ params }: VendorDetailPageProps) {
                       </Button>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex-grow">
                     {activeContract ? (
                       <div className="space-y-4">
                         <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -363,7 +368,7 @@ export default function VendorDetailPage({ params }: VendorDetailPageProps) {
                         )}
                       </div>
                     ) : (
-                      <div className="text-center py-8">
+                      <div className="flex flex-col items-center justify-center h-full text-center py-8">
                         <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                         <div className="text-gray-600 mb-4">
                           <p className="font-medium">No Active Contract</p>
@@ -381,61 +386,101 @@ export default function VendorDetailPage({ params }: VendorDetailPageProps) {
 
               {/* Recent Activity */}
               <Card>
-                <CardHeader>
-                  <CardTitle>Recent Activity</CardTitle>
-                  <CardDescription>
-                    Latest invoices and reconciliation results
-                  </CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Recent Activity</CardTitle>
+                    <CardDescription>
+                      Latest invoices and reconciliation results
+                    </CardDescription>
+                  </div>
+                  {((vendorInvoices.length > 0 ? vendorInvoices : mockVendorInvoices).length > 6) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const tabsElement = document.querySelector('[role="tablist"]');
+                        const invoicesTab = Array.from(tabsElement?.querySelectorAll('[role="tab"]') || [])
+                          .find(tab => tab.textContent === 'Invoices');
+                        if (invoicesTab) {
+                          (invoicesTab as HTMLElement).click();
+                        }
+                      }}
+                    >
+                      View All
+                    </Button>
+                  )}
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {(vendorInvoices.length > 0 ? vendorInvoices : mockVendorInvoices).slice(0, 5).map((invoice) => (
-                      <div key={invoice.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-5 w-5 text-gray-400" />
-                          <div>
-                            <p className="font-medium">
-                              {invoice.invoiceNumber}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {format(new Date(invoice.invoiceDate), 'MMM dd, yyyy')}
-                              {invoice.dueDate && ` • Due ${format(new Date(invoice.dueDate), 'MMM dd')}`}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="text-right">
-                            <p className="font-medium">
-                              ${invoice.totalAmount.toLocaleString()}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {invoice.lineItems?.length || 0} items
-                            </p>
-                          </div>
-                          <Badge 
-                            variant={
-                              invoice.status === 'reconciled' ? 'success' :
-                              invoice.status === 'flagged' ? 'warning' :
-                              invoice.status === 'rejected' ? 'error' : 'secondary'
-                            }
-                          >
-                            {invoice.status}
-                          </Badge>
-                          <Button variant="outline" size="sm" onClick={() => router.push(`/invoices/${invoice.id}`)}>
-                            View
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                    
-                    {(vendorInvoices.length > 0 ? vendorInvoices : mockVendorInvoices).length === 0 && (
-                      <div className="text-center py-12 text-muted-foreground">
-                        <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                        <p className="font-medium">No invoices yet</p>
-                        <p className="text-sm">Invoice activity will appear here</p>
-                      </div>
-                    )}
-                  </div>
+                  {(vendorInvoices.length > 0 ? vendorInvoices : mockVendorInvoices).length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p className="font-medium">No invoices yet</p>
+                      <p className="text-sm">Invoice activity will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="rounded-md border overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-[140px]">Invoice Date</TableHead>
+                            <TableHead>Invoice Number</TableHead>
+                            <TableHead className="text-right w-[120px]">Amount</TableHead>
+                            <TableHead className="w-[120px]">Status</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {(vendorInvoices.length > 0 ? vendorInvoices : mockVendorInvoices)
+                            .slice(0, 6)
+                            .map((invoice) => (
+                              <TableRow
+                                key={invoice.id}
+                                className="cursor-pointer hover:bg-gray-50"
+                                onClick={() => router.push(`/invoices/${invoice.id}`)}
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault()
+                                    router.push(`/invoices/${invoice.id}`)
+                                  }
+                                }}
+                              >
+                                <TableCell className="font-medium">
+                                  {format(new Date(invoice.invoiceDate), 'MMM dd, yyyy')}
+                                </TableCell>
+                                <TableCell>
+                                  <div>
+                                    <p className="font-medium">{invoice.invoiceNumber}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {invoice.lineItems?.length || 0} items
+                                    </p>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-right font-medium">
+                                  ${invoice.totalAmount.toLocaleString('en-US', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                  })}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge
+                                    variant={
+                                      invoice.status === 'reconciled' ? 'success' :
+                                      invoice.status === 'flagged' ? 'warning' :
+                                      invoice.status === 'rejected' ? 'error' : 'secondary'
+                                    }
+                                  >
+                                    {invoice.status === 'reconciled' ? 'Clean' :
+                                     invoice.status === 'flagged' ? 'Flagged' :
+                                     invoice.status === 'rejected' ? 'Rejected' :
+                                     invoice.status === 'approved' ? 'Approved' : 'Pending'}
+                                  </Badge>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -11,6 +12,7 @@ import { apiClient, type Vendor } from '@/lib/api'
 import { CreateVendorDialog } from '@/components/vendors/create-vendor-dialog'
 
 export default function VendorsPage() {
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [isCreateVendorOpen, setIsCreateVendorOpen] = useState(false)
 
@@ -30,9 +32,21 @@ export default function VendorsPage() {
     const matchesSearch = vendor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       vendor.businessDescription?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       vendor.canonicalName?.toLowerCase().includes(searchTerm.toLowerCase())
-    
+
     return matchesSearch
   }) || []
+
+  // Navigation handlers
+  const handleRowClick = (vendorId: string) => {
+    router.push(`/vendors/${vendorId}`)
+  }
+
+  const handleRowKeyDown = (e: React.KeyboardEvent, vendorId: string) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      router.push(`/vendors/${vendorId}`)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -152,7 +166,16 @@ export default function VendorsPage() {
               </TableRow>
             ) : (
               filteredVendors.map((vendor) => (
-                <TableRow key={vendor.id} className="hover:bg-gray-50 transition-colors" style={{height: '72px'}}>
+                <TableRow
+                  key={vendor.id}
+                  className="cursor-pointer hover:bg-orange-50 transition-colors"
+                  style={{height: '72px'}}
+                  onClick={() => handleRowClick(vendor.id)}
+                  onKeyDown={(e) => handleRowKeyDown(e, vendor.id)}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`View details for ${vendor.name}`}
+                >
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center bg-blue-100 rounded-lg">
@@ -178,10 +201,10 @@ export default function VendorsPage() {
                     )}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    <Badge 
+                    <Badge
                       variant={vendor.active ? 'default' : 'secondary'}
-                      className={vendor.active 
-                        ? 'bg-green-100 text-green-800 border-green-200' 
+                      className={vendor.active
+                        ? 'bg-green-100 text-green-800 border-green-200'
                         : 'bg-gray-100 text-gray-600 border-gray-200'
                       }
                     >
@@ -189,10 +212,13 @@ export default function VendorsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="px-6 py-4 text-center">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
-                      onClick={() => window.location.href = `/vendors/${vendor.id}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        router.push(`/vendors/${vendor.id}`)
+                      }}
                       className="h-9 px-4 hover:bg-gray-50"
                     >
                       View
@@ -232,7 +258,15 @@ export default function VendorsPage() {
           </div>
         ) : (
           filteredVendors.map((vendor) => (
-            <div key={vendor.id} className="bg-white rounded-lg border border-gray-200 p-4">
+            <div
+              key={vendor.id}
+              className="bg-white rounded-lg border border-gray-200 p-4 cursor-pointer hover:bg-orange-50 hover:border-orange-200 transition-colors"
+              onClick={() => handleRowClick(vendor.id)}
+              onKeyDown={(e) => handleRowKeyDown(e, vendor.id)}
+              tabIndex={0}
+              role="button"
+              aria-label={`View details for ${vendor.name}`}
+            >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3 flex-1">
                   <div className="flex h-10 w-10 items-center justify-center bg-blue-100 rounded-lg">
@@ -247,17 +281,20 @@ export default function VendorsPage() {
                     )}
                   </div>
                 </div>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
-                  onClick={() => window.location.href = `/vendors/${vendor.id}`}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    router.push(`/vendors/${vendor.id}`)
+                  }}
                   className="h-9 px-4"
                   style={{minHeight: '44px'}}
                 >
                   View
                 </Button>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   {vendor.businessDescription ? (
@@ -267,11 +304,11 @@ export default function VendorsPage() {
                   ) : (
                     <span className="text-sm text-gray-500">No category</span>
                   )}
-                  
-                  <Badge 
+
+                  <Badge
                     variant={vendor.active ? 'default' : 'secondary'}
-                    className={vendor.active 
-                      ? 'bg-green-100 text-green-800 border-green-200' 
+                    className={vendor.active
+                      ? 'bg-green-100 text-green-800 border-green-200'
                       : 'bg-gray-100 text-gray-600 border-gray-200'
                     }
                   >

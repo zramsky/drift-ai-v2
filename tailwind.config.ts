@@ -15,11 +15,11 @@ module.exports = {
         "2xl": "1400px",
       },
     },
-    // 12-column responsive grid system
-    gridTemplateColumns: {
-      '12': 'repeat(12, minmax(0, 1fr))',
-    },
     extend: {
+      // 12-column responsive grid system
+      gridTemplateColumns: {
+        '12': 'repeat(12, minmax(0, 1fr))',
+      },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         body: ['Roboto', 'system-ui', 'sans-serif'],
