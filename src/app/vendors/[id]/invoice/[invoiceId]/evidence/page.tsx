@@ -170,6 +170,23 @@ export default function EvidenceViewerPage() {
     }
   }, [])
 
+  // v2.4.1.2: Scroll to highlight when clicking legend item
+  const scrollToHighlight = useCallback((highlightId: string) => {
+    const element = highlightRefs.current.get(highlightId)
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      })
+      // Flash the highlight to draw attention
+      element.classList.add('ring-2', 'ring-brand-orange', 'ring-offset-2')
+      setTimeout(() => {
+        element.classList.remove('ring-2', 'ring-brand-orange', 'ring-offset-2')
+      }, 1500)
+    }
+  }, [])
+
   // Find invoice and vendor from mock data
   const invoice = mockInvoices.find(inv => inv.id === invoiceId)
   const vendor = mockVendors.find(v => v.id === vendorId)
@@ -519,6 +536,7 @@ export default function EvidenceViewerPage() {
                 {mockHighlights.map((highlight) => {
                   const effectiveMatchType = getEffectiveMatchType(highlight)
                   const isApproved = approvedHighlights.has(highlight.id)
+                  const isDiscrepancy = highlight.matchType === 'discrepancy' && !isApproved
 
                   return (
                     <div
@@ -530,9 +548,14 @@ export default function EvidenceViewerPage() {
                           ? 'border-success/30 bg-success/5'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
-                      onClick={() => setSelectedHighlight(selectedHighlight === highlight.id ? null : highlight.id)}
-                      onMouseEnter={() => setHoveredHighlight(highlight.id)}
-                      onMouseLeave={() => setHoveredHighlight(null)}
+                      onClick={() => {
+                        // v2.4.1.2: Toggle selection and scroll to highlight
+                        const newSelection = selectedHighlight === highlight.id ? null : highlight.id
+                        setSelectedHighlight(newSelection)
+                        if (newSelection) {
+                          scrollToHighlight(highlight.id)
+                        }
+                      }}
                     >
                       <div className="flex items-start gap-2">
                         {getHighlightIcon(effectiveMatchType)}
@@ -541,17 +564,32 @@ export default function EvidenceViewerPage() {
                           <p className="text-xs text-gray-600 mt-0.5">"{highlight.text}"</p>
                           {isApproved && (
                             <Badge variant="success" className="mt-1 text-xs">
-                              Approved
+                              ✓ Approved
                             </Badge>
                           )}
+                          {/* v2.4.1.2: Expanded details section */}
                           {selectedHighlight === highlight.id && (
-                            <div className="mt-2 pt-2 border-t border-gray-200">
-                              <p className="text-xs text-gray-700 leading-relaxed mb-1">
+                            <div className="mt-2 pt-2 border-t border-gray-200 space-y-2">
+                              <p className="text-xs text-gray-700 leading-relaxed">
                                 {highlight.explanation}
                               </p>
                               <p className="text-xs text-gray-500 italic">
                                 {highlight.contractReference}
                               </p>
+                              {/* v2.4.1.2: Approve button in legend for discrepancies */}
+                              {isDiscrepancy && (
+                                <Button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleApproveDiscrepancy(highlight.id)
+                                  }}
+                                  size="sm"
+                                  className="w-full bg-brand-orange hover:bg-orange-600 text-white mt-2"
+                                >
+                                  <CheckCircle className="h-3 w-3 mr-1" />
+                                  Approve This Item
+                                </Button>
+                              )}
                             </div>
                           )}
                         </div>
