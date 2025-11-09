@@ -2,8 +2,9 @@ import { mockApiClient } from './mock-data'
 import { UserState } from '@/hooks/use-user-state'
 import type { DashboardStats } from '@/types/dashboard'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA !== 'false'; // Always use mock data unless explicitly set to false
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+// Changed to use real API endpoints by default
+const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true'; // Use mock data only if explicitly set to true
 
 export interface ApiResponse<T> {
   data?: T;
@@ -496,6 +497,23 @@ class ApiClient {
     });
   }
 
+  async createContract(vendorId: string, contract: {
+    fileName: string;
+    fileUrl?: string;
+    effectiveDate: string;
+    renewalDate?: string;
+    endDate?: string;
+    status?: Contract['status'];
+    terms?: any;
+    extractedText?: string;
+    metadata?: any;
+  }): Promise<ApiResponse<Contract>> {
+    return this.request<Contract>(`/vendors/${vendorId}/contracts`, {
+      method: 'POST',
+      body: JSON.stringify(contract),
+    });
+  }
+
   // Invoice API
   async getInvoices(vendorId?: string, status?: string): Promise<ApiResponse<Invoice[]>> {
     if (USE_MOCK_DATA) {
@@ -545,6 +563,37 @@ class ApiClient {
         status: 0,
       };
     }
+  }
+
+  async createInvoice(vendorId: string, invoice: {
+    invoiceNumber: string;
+    invoiceDate: string;
+    dueDate?: string;
+    fileName: string;
+    fileUrl?: string;
+    status?: Invoice['status'];
+    totalAmount: number;
+    subtotal: number;
+    taxAmount?: number;
+    lineItems: Array<{
+      description: string;
+      quantity: number;
+      rate: number;
+      unit: string;
+      total: number;
+    }>;
+    fees?: Array<{
+      type: 'percent' | 'fixed';
+      description: string;
+      amount: number;
+    }>;
+    extractedText?: string;
+    metadata?: any;
+  }): Promise<ApiResponse<Invoice>> {
+    return this.request<Invoice>(`/vendors/${vendorId}/invoices`, {
+      method: 'POST',
+      body: JSON.stringify(invoice),
+    });
   }
 
   async getReconciliationReport(invoiceId: string): Promise<ApiResponse<ReconciliationReport>> {

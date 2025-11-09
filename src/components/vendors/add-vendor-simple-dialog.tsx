@@ -241,21 +241,31 @@ export function AddVendorSimpleDialog({ open, onOpenChange, onSuccess }: AddVend
       // If contract was uploaded, associate it with the vendor
       if (uploadedFile && vendorResponse.data?.id) {
         try {
-          // Note: This would be replaced with actual contract upload API
-          const contractData = {
-            vendorId: vendorResponse.data.id,
-            title: data.contractTitle,
-            effectiveDate: data.effectiveDate,
-            expirationDate: data.expirationDate,
-            file: uploadedFile
-          }
-
-          console.log('Contract data to upload:', contractData)
-
-          toast({
-            title: "Success!",
-            description: `${data.name} has been created with contract "${data.contractTitle}".`,
+          // Save the contract to the backend
+          const contractResponse = await apiClient.createContract(vendorResponse.data.id, {
+            fileName: uploadedFile.name,
+            effectiveDate: data.effectiveDate || new Date().toISOString(),
+            renewalDate: data.expirationDate,
+            status: 'active',
+            metadata: {
+              originalFileName: uploadedFile.name,
+              fileSize: uploadedFile.size,
+              uploadedAt: new Date().toISOString()
+            }
           })
+
+          if (contractResponse.error) {
+            toast({
+              title: "Vendor created, contract upload failed",
+              description: `${data.name} was created but the contract could not be saved: ${contractResponse.error}`,
+              variant: "destructive"
+            })
+          } else {
+            toast({
+              title: "Success!",
+              description: `${data.name} has been created with contract.`,
+            })
+          }
         } catch (contractError) {
           toast({
             title: "Vendor created, contract upload pending",
