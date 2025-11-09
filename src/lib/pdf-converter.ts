@@ -3,13 +3,13 @@
  * Converts PDF pages to base64 images for OpenAI Vision API
  */
 
-import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf'
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist'
 import { createCanvas } from 'canvas'
 
 // Configure PDF.js for Node.js environment
 // Disable worker in Node.js since it's not needed for server-side rendering
 if (typeof window === 'undefined') {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = ''
+  GlobalWorkerOptions.workerSrc = ''
 }
 
 export interface PDFConversionResult {
@@ -32,7 +32,7 @@ export async function convertPDFToImages(
 ): Promise<PDFConversionResult> {
   try {
     // Load PDF document
-    const loadingTask = pdfjsLib.getDocument({
+    const loadingTask = getDocument({
       data: new Uint8Array(pdfBuffer)
     })
 
@@ -54,7 +54,8 @@ export async function convertPDFToImages(
       // Render PDF page to canvas
       await page.render({
         canvasContext: context as any,
-        viewport: viewport
+        viewport: viewport,
+        canvas: canvas as any
       }).promise
 
       // Convert canvas to base64 image
