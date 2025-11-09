@@ -12,7 +12,6 @@ import { openAIService, type ContractAnalysisRequest } from '@/lib/ai/openai-ser
 import { logger } from '@/lib/logger';
 import { env } from '@/lib/env';
 import { z } from 'zod';
-import { convertPDFToSingleImage } from '@/lib/pdf-converter';
 
 // Request validation schema
 const AnalyzeContractRequestSchema = z.object({
@@ -90,6 +89,9 @@ export async function POST(request: NextRequest) {
         console.log('Detected PDF file, converting to image...');
 
         const pdfBuffer = Buffer.from(imageData, 'base64');
+
+        // Dynamic import to avoid loading pdfjs-dist during build
+        const { convertPDFToSingleImage } = await import('@/lib/pdf-converter');
         const conversionResult = await convertPDFToSingleImage(pdfBuffer);
 
         if (!conversionResult.success || !conversionResult.image) {

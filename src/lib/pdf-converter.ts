@@ -3,7 +3,7 @@
  * Converts PDF pages to base64 images for OpenAI Vision API
  */
 
-import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist'
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist/legacy/build/pdf.mjs'
 import { createCanvas } from 'canvas'
 
 // Configure PDF.js for Node.js environment
