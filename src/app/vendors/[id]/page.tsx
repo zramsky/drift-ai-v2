@@ -12,6 +12,8 @@ import { apiClient } from '@/lib/api'
 import { mockInvoices, mockContracts, mockReconciliationReports } from '@/lib/mock-data'
 import { EditVendorDialog } from '@/components/vendors/edit-vendor-dialog'
 import { ReplaceContractDialog } from '@/components/vendors/replace-contract-dialog'
+import { AddInvoiceDialog } from '@/components/vendors/add-invoice-dialog'
+import { AddContractDialog } from '@/components/vendors/add-contract-dialog'
 import { VendorSummaryView } from '@/components/vendors/vendor-summary-view'
 import { InvoiceDetailView } from '@/components/vendors/invoice-detail-view'
 
@@ -28,6 +30,8 @@ export default function VendorDetailPage({ params }: VendorDetailPageProps) {
   const [activeTab, setActiveTab] = useState('summary')
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isReplaceContractOpen, setIsReplaceContractOpen] = useState(false)
+  const [isAddInvoiceOpen, setIsAddInvoiceOpen] = useState(false)
+  const [isAddContractOpen, setIsAddContractOpen] = useState(false)
 
   // Fetch vendor details
   const { data: vendor, isLoading, error, refetch } = useQuery({
@@ -169,7 +173,7 @@ export default function VendorDetailPage({ params }: VendorDetailPageProps) {
             </div>
             <Button
               className="bg-brand-orange hover:bg-orange-600 text-white"
-              onClick={() => alert('Add Invoice functionality coming soon')}
+              onClick={() => setIsAddInvoiceOpen(true)}
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Invoice
@@ -190,6 +194,7 @@ export default function VendorDetailPage({ params }: VendorDetailPageProps) {
                 vendorId={params.id}
                 onInvoiceClick={handleInvoiceClick}
                 onEditVendor={() => setIsEditDialogOpen(true)}
+                onUploadContract={() => setIsAddContractOpen(true)}
               />
             </TabsContent>
 
@@ -341,6 +346,30 @@ export default function VendorDetailPage({ params }: VendorDetailPageProps) {
             onSuccess={() => {
               refetch()
               setIsReplaceContractOpen(false)
+            }}
+          />
+
+          {/* Add Invoice Dialog */}
+          <AddInvoiceDialog
+            vendorId={params.id}
+            vendorName={vendor.name}
+            open={isAddInvoiceOpen}
+            onOpenChange={setIsAddInvoiceOpen}
+            onSuccess={() => {
+              refetch()
+              setIsAddInvoiceOpen(false)
+            }}
+          />
+
+          {/* Add Contract Dialog */}
+          <AddContractDialog
+            vendorId={params.id}
+            vendorName={vendor.name}
+            open={isAddContractOpen}
+            onOpenChange={setIsAddContractOpen}
+            onSuccess={() => {
+              refetch()
+              setIsAddContractOpen(false)
             }}
           />
         </div>

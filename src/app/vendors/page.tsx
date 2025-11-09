@@ -9,12 +9,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Input } from '@/components/ui/input'
 import { Plus, Search, Building2 } from 'lucide-react'
 import { apiClient, type Vendor } from '@/lib/api'
-import { CreateVendorDialog } from '@/components/vendors/create-vendor-dialog'
+import { AddVendorSimpleDialog } from '@/components/vendors/add-vendor-simple-dialog'
 
 export default function VendorsPage() {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
-  const [isCreateVendorOpen, setIsCreateVendorOpen] = useState(false)
+  const [isAddVendorOpen, setIsAddVendorOpen] = useState(false)
 
   const { data: vendors, isLoading, error, refetch } = useQuery({
     queryKey: ['vendors'],
@@ -99,7 +99,7 @@ export default function VendorsPage() {
           <p className="text-gray-600" style={{fontSize: '16px', color: '#6b7280'}}>A clean directory of your vendors</p>
         </div>
         <Button
-          onClick={() => setIsCreateVendorOpen(true)}
+          onClick={() => setIsAddVendorOpen(true)}
           className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-md font-medium shrink-0"
           style={{backgroundColor: '#FF6B35', minHeight: '44px'}}
         >
@@ -153,7 +153,7 @@ export default function VendorsPage() {
                     </div>
                     {vendors?.length === 0 && (
                       <Button 
-                        onClick={() => setIsCreateVendorOpen(true)}
+                        onClick={() => setIsAddVendorOpen(true)}
                         className="bg-orange-500 hover:bg-orange-600 mt-2"
                         style={{backgroundColor: '#FF6B35', minHeight: '44px'}}
                       >
@@ -247,7 +247,7 @@ export default function VendorsPage() {
             </p>
             {vendors?.length === 0 && (
               <Button 
-                onClick={() => setIsCreateVendorOpen(true)}
+                onClick={() => setIsAddVendorOpen(true)}
                 className="bg-orange-500 hover:bg-orange-600 w-full"
                 style={{backgroundColor: '#FF6B35', minHeight: '44px'}}
               >
@@ -321,13 +321,13 @@ export default function VendorsPage() {
         )}
       </div>
 
-      {/* Create Vendor Dialog */}
-      <CreateVendorDialog
-        open={isCreateVendorOpen}
-        onOpenChange={setIsCreateVendorOpen}
+      {/* Add Vendor Dialog */}
+      <AddVendorSimpleDialog
+        open={isAddVendorOpen}
+        onOpenChange={setIsAddVendorOpen}
         onSuccess={() => {
           refetch()
-          setIsCreateVendorOpen(false)
+          setIsAddVendorOpen(false)
         }}
       />
     </div>

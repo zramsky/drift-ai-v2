@@ -137,7 +137,7 @@ export function Sidebar({ className, isOpen, onClose, isCollapsed, onCollapseTog
               return (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={item.href as any}
                   className={cn(
                     "flex items-center rounded-xl transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1) text-sm font-medium",
                     "min-h-[48px] relative overflow-hidden",

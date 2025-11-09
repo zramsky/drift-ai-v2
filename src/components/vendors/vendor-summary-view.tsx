@@ -24,9 +24,10 @@ interface VendorSummaryViewProps {
   vendorId: string
   onInvoiceClick: (invoiceId: string) => void
   onEditVendor: () => void
+  onUploadContract?: () => void
 }
 
-export function VendorSummaryView({ vendorId, onInvoiceClick, onEditVendor }: VendorSummaryViewProps) {
+export function VendorSummaryView({ vendorId, onInvoiceClick, onEditVendor, onUploadContract }: VendorSummaryViewProps) {
   // Fetch vendor details
   const { data: vendor, isLoading } = useQuery({
     queryKey: ['vendor', vendorId],
@@ -217,6 +218,17 @@ export function VendorSummaryView({ vendorId, onInvoiceClick, onEditVendor }: Ve
                   Current active contract details
                 </CardDescription>
               </div>
+              {onUploadContract && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onUploadContract}
+                  className="hover:bg-brand-orange/10 hover:border-brand-orange"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Contract
+                </Button>
+              )}
             </div>
           </CardHeader>
           <CardContent className="flex-grow">

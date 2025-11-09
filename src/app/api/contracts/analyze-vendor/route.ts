@@ -1,50 +1,28 @@
 /**
- * Invoice Analysis API Endpoint
- * 
- * POST /api/invoices/analyze
- * 
- * Analyzes an invoice image using OpenAI GPT-4 Vision
+ * Contract Analysis API Endpoint for Vendor Extraction
+ *
+ * POST /api/contracts/analyze-vendor
+ *
+ * Analyzes a contract document using OpenAI GPT-4 Vision to extract vendor information
  * Supports both real AI and mock mode for development
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { openAIService, type InvoiceAnalysisRequest } from '@/lib/ai/openai-service';
+import { openAIService, type ContractAnalysisRequest } from '@/lib/ai/openai-service';
 import { logger } from '@/lib/logger';
-import { usageTracker } from '@/lib/usage-tracker';
 import { env } from '@/lib/env';
 import { z } from 'zod';
+import { convertPDFToSingleImage } from '@/lib/pdf-converter';
 
 // Request validation schema
-const AnalyzeRequestSchema = z.object({
+const AnalyzeContractRequestSchema = z.object({
   imageUrl: z.string().url('Invalid image URL').refine(
-    (url) => url.startsWith('https://') || url.startsWith('http://localhost'),
-    'Image URL must use HTTPS in production'
+    (url) => url.startsWith('https://') || url.startsWith('http://localhost') || url.startsWith('data:'),
+    'Image URL must use HTTPS in production or be a data URL'
   ).optional(),
   imageData: z.string().optional(),
   imageType: z.string().optional(),
-  fileName: z.string().optional(),
-  contractTerms: z.object({
-    paymentTerms: z.string(),
-    pricing: z.array(z.object({
-      item: z.string(),
-      price: z.number().positive(),
-      unit: z.string(),
-      conditions: z.string().optional()
-    })),
-    discounts: z.array(z.object({
-      type: z.string(),
-      amount: z.number(),
-      conditions: z.string()
-    })).optional(),
-    taxRate: z.number().min(0).max(100).optional(),
-    effectiveDate: z.string(),
-    expirationDate: z.string().optional()
-  }).optional(),
-  vendorInfo: z.object({
-    name: z.string(),
-    id: z.string(),
-    contactEmail: z.string().email().optional()
-  }).optional()
+  fileName: z.string().optional()
 });
 
 // Rate limiting (simple in-memory implementation)
@@ -72,8 +50,8 @@ function checkRateLimit(ip: string): boolean {
 export async function POST(request: NextRequest) {
   try {
     // Get client IP for rate limiting
-    const ip = request.headers.get('x-forwarded-for') || 
-               request.headers.get('x-real-ip') || 
+    const ip = request.headers.get('x-forwarded-for') ||
+               request.headers.get('x-real-ip') ||
                'localhost';
 
     // Check rate limit
@@ -86,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     // Parse and validate request body
     const body = await request.json();
-    const validatedData = AnalyzeRequestSchema.parse(body);
+    const validatedData = AnalyzeContractRequestSchema.parse(body);
 
     // Check if AI features are enabled
     if (!env.NEXT_PUBLIC_AI_FEATURES_ENABLED) {
@@ -100,47 +78,67 @@ export async function POST(request: NextRequest) {
     }
 
     // Prepare image URL - either from URL or base64 data
-    let imageUrl: string
-    if (validatedData.imageData) {
-      // Create data URL from base64 data
-      const mimeType = validatedData.imageType || 'image/jpeg'
-      imageUrl = `data:${mimeType};base64,${validatedData.imageData}`
+    let imageUrl: string;
+    let imageData = validatedData.imageData;
+
+    if (imageData) {
+      const mimeType = validatedData.imageType || 'image/jpeg';
+
+      // Check if this is a PDF
+      if (mimeType === 'application/pdf' || validatedData.fileName?.endsWith('.pdf')) {
+        // Convert PDF to image
+        console.log('Detected PDF file, converting to image...');
+
+        const pdfBuffer = Buffer.from(imageData, 'base64');
+        const conversionResult = await convertPDFToSingleImage(pdfBuffer);
+
+        if (!conversionResult.success || !conversionResult.image) {
+          return NextResponse.json(
+            { error: 'Failed to convert PDF to image: ' + (conversionResult.error || 'Unknown error') },
+            { status: 400 }
+          );
+        }
+
+        console.log('PDF converted successfully to image');
+        imageData = conversionResult.image;
+        imageUrl = `data:image/png;base64,${imageData}`;
+      } else {
+        // Use image data directly
+        imageUrl = `data:${mimeType};base64,${imageData}`;
+      }
     } else if (validatedData.imageUrl) {
-      imageUrl = validatedData.imageUrl
+      imageUrl = validatedData.imageUrl;
     } else {
       return NextResponse.json(
         { error: 'Either imageUrl or imageData must be provided' },
         { status: 400 }
-      )
+      );
     }
 
     // Log analysis request (for monitoring/debugging)
     if (process.env.NEXT_PUBLIC_DEBUG_MODE === 'true') {
-      console.log('Invoice analysis request:', {
+      console.log('Contract analysis request:', {
         imageSource: validatedData.imageData ? 'base64' : 'url',
         fileName: validatedData.fileName || 'unknown',
-        hasContractTerms: !!validatedData.contractTerms,
-        vendorId: validatedData.vendorInfo?.id,
         timestamp: new Date().toISOString()
       });
     }
 
     // Perform the analysis
-    const analysisRequest: InvoiceAnalysisRequest = {
+    const analysisRequest: ContractAnalysisRequest = {
       imageUrl,
-      contractTerms: validatedData.contractTerms,
-      vendorInfo: validatedData.vendorInfo
+      fileName: validatedData.fileName
     };
 
-    const result = await openAIService.analyzeInvoice(analysisRequest);
+    const result = await openAIService.analyzeContractForVendor(analysisRequest);
 
     // Log successful analysis (for monitoring)
     if (process.env.NEXT_PUBLIC_DEBUG_MODE === 'true') {
-      console.log('Analysis completed:', {
+      console.log('Contract analysis completed:', {
         success: result.success,
         confidence: result.confidence,
-        discrepancyCount: result.discrepancies.length,
-        complianceStatus: result.complianceStatus,
+        vendorName: result.extractedVendorData.vendorName,
+        contractTitle: result.extractedContractData.contractTitle,
         processingTime: result.processingTime
       });
     }
@@ -148,13 +146,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
 
   } catch (error) {
-    console.error('Invoice analysis API error:', error);
+    console.error('Contract analysis API error:', error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request data',
-          details: error.issues 
+          details: error.issues
         },
         { status: 400 }
       );
@@ -168,7 +166,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
         message: process.env.NODE_ENV === 'development' ? error instanceof Error ? error.message : 'Unknown error' : 'Something went wrong'
       },
@@ -180,9 +178,9 @@ export async function POST(request: NextRequest) {
 // Health check endpoint
 export async function GET() {
   const status = openAIService.getStatus();
-  
+
   return NextResponse.json({
-    service: 'invoice-analysis',
+    service: 'contract-vendor-analysis',
     status: 'healthy',
     mockMode: status.mockMode,
     configured: status.configured,

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Sysco Food Services</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: white;
+            color: #000;
+        }
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 3px solid #003366;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .company-info {
+            flex: 1;
+        }
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #003366;
+            margin-bottom: 10px;
+        }
+        .company-address {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.4;
+        }
+        .invoice-details {
+            text-align: right;
+            flex: 1;
+        }
+        .invoice-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #003366;
+            margin-bottom: 10px;
+        }
+        .invoice-meta {
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .billing-section {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+        }
+        .billing-box {
+            width: 48%;
+            border: 1px solid #ddd;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+        .billing-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #003366;
+        }
+        .billing-content {
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .items-table th {
+            background-color: #003366;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .items-table td {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 12px;
+            font-size: 12px;
+        }
+        .items-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .totals-section {
+            margin-top: 30px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .totals-table {
+            width: 350px;
+            border: 2px solid #003366;
+        }
+        .totals-table td {
+            padding: 10px 15px;
+            font-size: 13px;
+        }
+        .totals-table .label {
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
+        .totals-table .amount {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+        .totals-table .total-row {
+            background-color: #003366;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .payment-terms {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+        }
+        .payment-terms-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+        .payment-terms-content {
+            font-size: 12px;
+            color: #856404;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 10px;
+            color: #666;
+            text-align: center;
+        }
+        .highlight {
+            background-color: #ffff99;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-header">
+        <div class="company-info">
+            <div class="company-name">SYSCO COLUMBUS</div>
+            <div class="company-address">
+                8950 Memorial Drive, Suite 200<br>
+                Columbus, Ohio 43235<br>
+                Phone: (614) 555-8900<br>
+                Email: billing@syscocolumbus.com<br>
+                Federal Tax ID: 31-0987654
+            </div>
+        </div>
+        <div class="invoice-details">
+            <div class="invoice-number">INVOICE #2024-001234</div>
+            <div class="invoice-meta">
+                <strong>Invoice Date:</strong> January 15, 2024<br>
+                <strong>Due Date:</strong> February 14, 2024<br>
+                <strong>Terms:</strong> <span class="highlight">Net 30 Days</span><br>
+                <strong>Customer ID:</strong> CUST-8842
+            </div>
+        </div>
+    </div>
+
+    <div class="billing-section">
+        <div class="billing-box">
+            <div class="billing-title">BILL TO:</div>
+            <div class="billing-content">
+                <strong>Sunset Manor Nursing Home</strong><br>
+                450 Healthcare Boulevard<br>
+                Gahanna, OH 43230<br>
+                Attn: Accounts Payable<br>
+                Email: billing@sunsetmanornursing.com
+            </div>
+        </div>
+        <div class="billing-box">
+            <div class="billing-title">SHIP TO:</div>
+            <div class="billing-content">
+                <strong>Sunset Manor - Receiving Dock</strong><br>
+                450 Healthcare Boulevard<br>
+                Gahanna, OH 43230<br>
+                Delivery: January 12, 2024<br>
+                Time: 7:30 AM
+            </div>
+        </div>
+    </div>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Item Description</th>
+                <th class="text-center">Qty</th>
+                <th class="text-right">Unit Price</th>
+                <th class="text-right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Fresh Vegetables - Mixed Cases<br><small style="color: #666;">Product #VEG-2401 | Case of 24</small></td>
+                <td class="text-center">15</td>
+                <td class="text-right"><span class="highlight">$45.50</span></td>
+                <td class="text-right">$682.50</td>
+            </tr>
+            <tr>
+                <td>Protein - Ground Beef 80/20<br><small style="color: #666;">Product #BEEF-1055 | 10 lb case</small></td>
+                <td class="text-center">8</td>
+                <td class="text-right"><span class="highlight">$125.75</span></td>
+                <td class="text-right">$1,006.00</td>
+            </tr>
+            <tr>
+                <td>Dairy - Milk 2% Gallon Cases<br><small style="color: #666;">Product #MILK-0340 | Case of 4 gallons</small></td>
+                <td class="text-center">12</td>
+                <td class="text-right"><span class="highlight">$35.25</span></td>
+                <td class="text-right">$423.00</td>
+            </tr>
+            <tr>
+                <td>Bread - Whole Wheat Loaves<br><small style="color: #666;">Product #BREAD-8820 | Individual loaves</small></td>
+                <td class="text-center">25</td>
+                <td class="text-right"><span class="highlight">$2.85</span></td>
+                <td class="text-right">$71.25</td>
+            </tr>
+            <tr>
+                <td>Chicken Breast - Boneless Skinless<br><small style="color: #666;">Product #CHIC-4421 | 10 lb case</small></td>
+                <td class="text-center">6</td>
+                <td class="text-right">$89.50</td>
+                <td class="text-right">$537.00</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="totals-section">
+        <table class="totals-table">
+            <tr>
+                <td class="label">Subtotal:</td>
+                <td class="amount">$2,719.75</td>
+            </tr>
+            <tr>
+                <td class="label">Volume Discount (10%):</td>
+                <td class="amount" style="color: green;">-$271.98</td>
+            </tr>
+            <tr>
+                <td class="label">Adjusted Subtotal:</td>
+                <td class="amount">$2,447.77</td>
+            </tr>
+            <tr>
+                <td class="label">Sales Tax (8.5%):</td>
+                <td class="amount">$208.06</td>
+            </tr>
+            <tr>
+                <td class="label">Delivery Fee:</td>
+                <td class="amount">$0.00</td>
+            </tr>
+            <tr class="total-row">
+                <td class="label">TOTAL DUE:</td>
+                <td class="amount"><span class="highlight">$2,655.83</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="payment-terms">
+        <div class="payment-terms-title">PAYMENT TERMS & INSTRUCTIONS</div>
+        <div class="payment-terms-content">
+            <strong>Payment Due:</strong> February 14, 2024 (Net 30 Days from invoice date)<br>
+            <strong>Early Payment Discount:</strong> 2% discount if paid by January 25, 2024<br>
+            <strong>Late Payment:</strong> 1.5% monthly finance charge on overdue balances<br>
+            <br>
+            <strong>Payment Methods:</strong><br>
+            • Check: Mail to address above, Attn: Accounts Receivable<br>
+            • ACH: Account #4521-8899-0012 | Routing #044000037<br>
+            • Credit Card: Call (614) 555-8900<br>
+            <br>
+            Please include invoice number on all payments.
+        </div>
+    </div>
+
+    <div class="footer">
+        Thank you for your business!<br>
+        Questions? Contact our Customer Service team at (614) 555-8900 or customerservice@syscocolumbus.com<br>
+        <br>
+        This invoice is subject to the terms and conditions outlined in our Service Agreement dated January 1, 2024.
+    </div>
+</body>
+</html>

@@ -92,6 +92,53 @@ export interface Discrepancy {
   recommendation?: string;
 }
 
+// Contract analysis types
+export interface ContractAnalysisRequest {
+  imageUrl: string;
+  fileName?: string;
+}
+
+export interface ContractAnalysisResult {
+  success: boolean;
+  confidence: number;
+  extractedVendorData: ExtractedVendorData;
+  extractedContractData: ExtractedContractData;
+  processingTime: number;
+}
+
+export interface ExtractedVendorData {
+  vendorName: string;
+  vendorAddress?: string;
+  businessCategory?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+}
+
+export interface ExtractedContractData {
+  contractTitle: string;
+  effectiveDate: string;
+  expirationDate?: string;
+  paymentTerms?: string;
+  autoRenewal?: boolean;
+  renewalNoticeDays?: number;
+  keyTerms?: string[];
+  pricing?: {
+    structure?: string;
+    currency?: string;
+    escalationClause?: string;
+  };
+  // Summary for invoice reconciliation
+  reconciliationSummary?: {
+    overview: string;
+    pricingTerms: string[];
+    quantityLimits?: string;
+    taxTerms?: string;
+    discounts?: string[];
+    penalties?: string[];
+    criticalClauses: string[];
+  };
+}
+
 // Configuration interface
 export interface OpenAIServiceConfig {
   apiKey?: string;
@@ -110,7 +157,9 @@ export class OpenAIService {
   private timeoutMs: number;
 
   constructor(config: OpenAIServiceConfig = {}) {
-    this.mockMode = config.mockMode ?? process.env.NODE_ENV === 'development';
+    // Use environment variable to determine mock mode
+    const envMockMode = process.env.NEXT_PUBLIC_MOCK_MODE === 'true';
+    this.mockMode = config.mockMode ?? envMockMode;
     this.retryAttempts = config.retryAttempts ?? 3;
     this.timeoutMs = config.timeoutMs ?? 60000; // 60 seconds
 
@@ -143,7 +192,7 @@ export class OpenAIService {
       const prompt = this.buildAnalysisPrompt(request);
       
       const response = await this.client.chat.completions.create({
-        model: "gpt-4-vision-preview",
+        model: process.env.OPENAI_MODEL || "gpt-4o",
         messages: [
           {
             role: "user",
@@ -159,8 +208,9 @@ export class OpenAIService {
             ]
           }
         ],
-        max_tokens: 2000,
-        temperature: 0.1, // Low temperature for consistent results
+        max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS || "2000"),
+        temperature: parseFloat(process.env.OPENAI_TEMPERATURE || "0.1"),
+        user: `drift-ai-${Date.now()}`, // For usage tracking
       });
 
       return this.parseOpenAIResponse(response, startTime);
@@ -346,12 +396,334 @@ Be thorough and accurate. Flag ALL discrepancies, even minor ones.`;
         throw new Error('No content in OpenAI response');
       }
 
-      const result = JSON.parse(content) as InvoiceAnalysisResult;
+      // Remove markdown code block markers if present (GPT-4o sometimes adds these)
+      let cleanedContent = content.trim();
+      if (cleanedContent.startsWith('```json')) {
+        cleanedContent = cleanedContent.replace(/^```json\s*/, '').replace(/```\s*$/, '');
+      } else if (cleanedContent.startsWith('```')) {
+        cleanedContent = cleanedContent.replace(/^```\s*/, '').replace(/```\s*$/, '');
+      }
+
+      const result = JSON.parse(cleanedContent) as InvoiceAnalysisResult;
       result.processingTime = Date.now() - startTime;
 
       return result;
     } catch (error) {
       throw new Error(`Failed to parse OpenAI response: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  /**
+   * Analyze a contract to extract vendor information
+   */
+  async analyzeContractForVendor(request: ContractAnalysisRequest): Promise<ContractAnalysisResult> {
+    const startTime = Date.now();
+
+    if (this.mockMode) {
+      return this.generateMockContractAnalysis(request, startTime);
+    }
+
+    if (!this.client) {
+      throw new Error('OpenAI client not initialized');
+    }
+
+    try {
+      const prompt = this.buildContractAnalysisPrompt();
+
+      const response = await this.client.chat.completions.create({
+        model: process.env.OPENAI_MODEL || "gpt-4o",
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              {
+                type: "image_url",
+                image_url: {
+                  url: request.imageUrl,
+                  detail: "high"
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS || "2000"),
+        temperature: parseFloat(process.env.OPENAI_TEMPERATURE || "0.1"),
+        user: `drift-ai-contract-${Date.now()}`,
+      });
+
+      return this.parseContractAnalysisResponse(response, startTime);
+    } catch (error) {
+      console.error('OpenAI API Error:', error);
+      throw new Error(`Contract analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  /**
+   * Generate mock contract analysis for development/testing
+   */
+  private generateMockContractAnalysis(request: ContractAnalysisRequest, startTime: number): ContractAnalysisResult {
+    // Simulate API delay
+    const delay = Math.random() * 2000 + 1000; // 1-3 seconds
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const processingTime = Date.now() - startTime;
+        const fileName = request.fileName || 'contract.pdf';
+
+        // Extract vendor name from filename if possible
+        const vendorNameGuess = fileName
+          .replace(/\.[^/.]+$/, '') // Remove extension
+          .replace(/[-_]/g, ' ') // Replace dashes/underscores with spaces
+          .replace(/contract|agreement|service/gi, '') // Remove common words
+          .trim();
+
+        resolve({
+          success: true,
+          confidence: 0.92,
+          extractedVendorData: {
+            vendorName: vendorNameGuess || "Professional Healthcare Services Inc",
+            vendorAddress: "456 Medical Plaza Dr, Suite 200, Columbus, OH 43215",
+            businessCategory: "Healthcare Services",
+            contactEmail: "contracts@profhealthcare.com",
+            contactPhone: "(614) 555-0123"
+          },
+          extractedContractData: {
+            contractTitle: fileName.replace(/\.[^/.]+$/, ''),
+            effectiveDate: "2024-01-01",
+            expirationDate: "2024-12-31",
+            paymentTerms: "Net 30 Days",
+            autoRenewal: true,
+            renewalNoticeDays: 60,
+            keyTerms: [
+              "Payment terms: Net 30 days from invoice date",
+              "Volume discount: 10% on orders over $5,000",
+              "Quality guarantee: 100% satisfaction or replacement",
+              "Force majeure clause included",
+              "90-day termination notice required"
+            ],
+            pricing: {
+              structure: "Per unit with volume discounts",
+              currency: "USD",
+              escalationClause: "Annual CPI adjustment capped at 3%"
+            },
+            reconciliationSummary: {
+              overview: "Service agreement for medical supplies and healthcare products with tiered pricing and volume discounts. Contract includes quality guarantees and flexible payment terms.",
+              pricingTerms: [
+                "Base unit price: $4.50 per medical supply unit",
+                "Volume discount: 10% discount on orders exceeding $5,000",
+                "Volume discount: 15% discount on orders exceeding $10,000",
+                "Bulk orders (500+ units): Additional 5% discount",
+                "Price lock guarantee for first 6 months"
+              ],
+              quantityLimits: "Minimum order: 50 units per shipment. Maximum order: 5,000 units per month. No minimum monthly commitment.",
+              taxTerms: "Sales tax applies at prevailing local rate (currently 8.5% for Ohio). Tax exempt organizations must provide valid certificate.",
+              discounts: [
+                "Early payment discount: 2% if paid within 10 days",
+                "Volume tier 1: 10% on orders over $5,000",
+                "Volume tier 2: 15% on orders over $10,000",
+                "Loyalty program: Additional 3% after 12 months of continuous service"
+              ],
+              penalties: [
+                "Late payment fee: 1.5% per month on overdue balances",
+                "Restocking fee: 15% on returns (excludes defective items)",
+                "Rush order surcharge: 20% for orders requiring < 48hr delivery"
+              ],
+              criticalClauses: [
+                "Price adjustment allowed only with 60-day written notice",
+                "Force majeure: Delivery delays excused for circumstances beyond control",
+                "Quality guarantee: 100% refund or replacement for defective products within 30 days",
+                "Contract can be terminated with 90-day written notice by either party",
+                "Minimum order quantities may be waived for first 3 months (trial period)"
+              ]
+            }
+          },
+          processingTime
+        });
+      }, delay);
+    }) as any;
+  }
+
+  /**
+   * Build the contract analysis prompt for vendor extraction
+   */
+  private buildContractAnalysisPrompt(): string {
+    return `You are an expert contract analysis AI for DRIFT.AI, a contract reconciliation platform for nursing home operators.
+
+**CRITICAL MISSION**: Extract ALL FINANCIAL TERMS with extreme precision. This data will be used to automatically detect invoice overcharges and contract violations.
+
+**STEP 1: READ THE ENTIRE CONTRACT CAREFULLY**
+Use GPT-4 Vision to read every section, especially:
+- Pricing tables and schedules
+- Payment terms and conditions
+- Discount structures
+- Tax clauses
+- Minimum/maximum order quantities
+- Late fees and penalties
+- Price adjustment/escalation clauses
+
+**STEP 2: STANDARDIZE EXTRACTED DATA**
+
+1. **Vendor Information** (extract exactly as written):
+   - Official vendor/company name
+   - Business address (full address)
+   - Business category (Food Service, Medical Supplies, Cleaning Services, IT Services, Office Supplies, Healthcare Services, Transportation, Professional Services, Other)
+   - Contact email
+   - Contact phone number
+
+2. **Contract Dates** (use ISO format YYYY-MM-DD):
+   - Contract title/name
+   - Effective date (start date)
+   - Expiration date (end date)
+   - Auto-renewal: true/false
+   - Renewal notice period (number of days)
+
+3. **Payment Terms** (standardize format):
+   - Standard format: "Net 30", "Due on Receipt", "Net 15", etc.
+   - Early payment discounts: "2% if paid within 10 days"
+   - Late payment penalties: "1.5% per month on overdue balances"
+   - Payment methods accepted
+
+4. **FINANCIAL TERMS - EXTRACT EVERY DETAIL**:
+
+   a. **Pricing Terms** (list EVERY price with complete details):
+      Format each as: "[Exact Product Name]: $X.XX [per unit type] [any conditions]"
+      Examples:
+      - "Fresh Vegetables - Mixed Cases: $42.00 per case"
+      - "Protein - Ground Beef (80/20): $125.00 per case (minimum 5 cases)"
+      - "Monthly Service Fee: $500.00 per month (first 6 months), $550.00 per month (thereafter)"
+
+   b. **Volume Discounts** (extract ALL discount tiers):
+      Format: "[Threshold]: [Discount] [conditions]"
+      Examples:
+      - "Orders over $5,000/month: 10% discount on all items"
+      - "Orders over $10,000/month: 15% discount on all items"
+      - "Bulk orders 500+ units (same item): additional 5% discount"
+
+   c. **Tax Terms** (be specific):
+      - Tax rate percentage
+      - What items are taxable
+      - Tax-exempt conditions
+      - Example: "8.5% sales tax on all taxable items (Ohio state + local)"
+
+   d. **Quantity Restrictions**:
+      - Minimum order quantities per product
+      - Maximum order quantities
+      - Order frequency requirements
+      - Example: "Minimum 10 cases per order, maximum 500 cases per month"
+
+   e. **Price Protection Clauses**:
+      - Price lock periods: "Pricing guaranteed for first 6 months"
+      - Price increase limits: "Price increases cannot exceed 5% annually"
+      - Price increase notice: "60 days written notice required for price changes"
+      - Termination rights: "Customer may terminate if price increase exceeds 5%"
+
+   f. **Penalties & Fees**:
+      - Late payment fees
+      - Restocking fees
+      - Cancellation fees
+      - Delivery fees
+      - Example: "15% restocking fee on non-defective returns"
+
+   g. **Financial Summary** (write 2-3 sentences):
+      Summarize the overall financial terms in plain language, highlighting:
+      - What products/services are covered
+      - Base pricing structure
+      - Key discount opportunities
+      - Important restrictions or penalties
+
+**STEP 3: RETURN VALID JSON ONLY**
+
+CRITICAL: Return ONLY valid JSON. No markdown, no code blocks, no explanations.
+
+{
+  "success": true,
+  "confidence": 0.92,
+  "extractedVendorData": {
+    "vendorName": "Exact Company Name from Contract",
+    "vendorAddress": "Full Address with City, State, ZIP",
+    "businessCategory": "One of: Food Service, Medical Supplies, Cleaning Services, IT Services, Office Supplies, Healthcare Services, Transportation, Professional Services, Other",
+    "contactEmail": "email@company.com or null",
+    "contactPhone": "(XXX) XXX-XXXX or null"
+  },
+  "extractedContractData": {
+    "contractTitle": "Exact Title from Contract",
+    "effectiveDate": "YYYY-MM-DD",
+    "expirationDate": "YYYY-MM-DD or null if perpetual",
+    "paymentTerms": "Net 30 Days (standardized format)",
+    "autoRenewal": true,
+    "renewalNoticeDays": 60,
+    "keyTerms": ["Important clause 1", "Important clause 2"],
+    "pricing": {
+      "structure": "Fixed pricing with volume discounts",
+      "currency": "USD",
+      "escalationClause": "Prices may increase after 6 months with 60 days notice, max 5% annually"
+    },
+    "reconciliationSummary": {
+      "overview": "This contract covers [products/services] for [purpose]. Base pricing ranges from $X to $Y with volume discounts available for orders over $Z.",
+      "pricingTerms": [
+        "Product A: $42.00 per case",
+        "Product B: $125.00 per case (minimum 5 cases)",
+        "Product C: $34.50 per case"
+      ],
+      "quantityLimits": "Minimum 10 cases per order. No maximum specified.",
+      "taxTerms": "8.5% sales tax applies to all taxable items per Ohio state requirements",
+      "discounts": [
+        "10% discount for monthly orders exceeding $5,000",
+        "15% discount for monthly orders exceeding $10,000",
+        "Additional 5% for bulk orders of 500+ units of same item"
+      ],
+      "penalties": [
+        "Late payment: 1.5% per month on overdue balances",
+        "Restocking fee: 15% on non-defective returns",
+        "Delivery fee: $35 for orders under $500"
+      ],
+      "criticalClauses": [
+        "Pricing locked for first 6 months from effective date",
+        "Price increases require 60 days written notice",
+        "Customer may terminate without penalty if price increase exceeds 5%",
+        "90 days written notice required for contract termination"
+      ]
+    }
+  }
+}
+
+**VALIDATION CHECKLIST**:
+✓ All dollar amounts include "$" symbol
+✓ All percentages include "%" symbol
+✓ All dates in YYYY-MM-DD format
+✓ All quantities include units (cases, units, items, etc.)
+✓ Response is valid JSON (no markdown, no code blocks)
+✓ Every pricing term includes product name, price, and unit
+✓ Financial summary is clear and actionable
+
+Return ONLY the JSON object. No additional text, no markdown formatting, no code blocks.`;
+  }
+
+  /**
+   * Parse contract analysis response
+   */
+  private parseContractAnalysisResponse(response: any, startTime: number): ContractAnalysisResult {
+    try {
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        throw new Error('No content in OpenAI response');
+      }
+
+      // Remove markdown code block markers if present (GPT-4o sometimes adds these)
+      let cleanedContent = content.trim();
+      if (cleanedContent.startsWith('```json')) {
+        cleanedContent = cleanedContent.replace(/^```json\s*/, '').replace(/```\s*$/, '');
+      } else if (cleanedContent.startsWith('```')) {
+        cleanedContent = cleanedContent.replace(/^```\s*/, '').replace(/```\s*$/, '');
+      }
+
+      const result = JSON.parse(cleanedContent) as ContractAnalysisResult;
+      result.processingTime = Date.now() - startTime;
+
+      return result;
+    } catch (error) {
+      throw new Error(`Failed to parse contract analysis response: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -370,16 +742,7 @@ Be thorough and accurate. Flag ALL discrepancies, even minor ones.`;
 // Singleton instance for the application
 export const openAIService = new OpenAIService({
   apiKey: process.env.OPENAI_API_KEY,
-  mockMode: !process.env.OPENAI_API_KEY || process.env.NODE_ENV === 'development'
+  mockMode: process.env.NEXT_PUBLIC_MOCK_MODE === 'true'
 });
 
-// Export types for use in other modules
-export type {
-  InvoiceAnalysisRequest,
-  InvoiceAnalysisResult,
-  ExtractedInvoiceData,
-  Discrepancy,
-  ContractTerms,
-  PricingTerm,
-  VendorInfo
-};
+// Types are already exported as interfaces above - no need to re-export
